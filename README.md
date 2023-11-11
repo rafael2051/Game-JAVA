@@ -1,6 +1,6 @@
 ## GAME Project in JAVA
 
-Hi there! This is a game made by me and my friends in java, 
+Hi there! This is a game made by me in java.
 ## Folder Structure
 
 The workspace contains two folders by default, where:
