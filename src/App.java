@@ -39,9 +39,9 @@ public class App {
                 /*
                  * TODO: lógica do main menu
                  */
-            }    
+            }
 
-            else{
+            else if (janela.getStatus() == 1){
                 currentTime = System.currentTimeMillis() - previousTime;
                 currentTimeShootRate = System.currentTimeMillis() - previousTimeShootRate;
                 currentTimeSpawn = System.currentTimeMillis() - previousTimeSpawn;
@@ -75,6 +75,12 @@ public class App {
                     threadMoveZombie.start();
                     janela.render();
                 }
+            }
+
+            else {
+                /*
+                 * TODO: fazer lógica do menu de game over
+                 */
             }
 
         }

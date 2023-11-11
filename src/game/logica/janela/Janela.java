@@ -14,7 +14,6 @@ import game.logica.player.Bullet;
 import game.logica.player.BulletStandard;
 
 import game.logica.player.Player;
-import game.logica.player.TarefaControlShootRate;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -32,8 +31,8 @@ public class Janela extends JFrame{
     public JPanel tela;
     public List <Player> players;
     public boolean[] controleTecla = new boolean[6];
-	public List <Zombie> zombies;
-	public List <Bullet> bullets;
+	public List <Zombie> zombies; // verificar vector
+	public List <Bullet> bullets; //verifcar vector
 	private BulletStandard bulletStandard;
 	private int fortressHP;
 	private int damageTaken;
