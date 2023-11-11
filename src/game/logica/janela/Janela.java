@@ -41,7 +41,7 @@ public class Janela extends JFrame{
 	private Image main_menu_start;
 	private Image main_menu_exit;
 
-	private Integer status;
+	private Integer game_status;
 
 	private Image scenario;
 	private Image death_image;
@@ -69,7 +69,7 @@ public class Janela extends JFrame{
             @Override
             public void paintComponent(Graphics g){
 
-				if(status == 0){
+				if(game_status == 0){
 					g.drawImage(main_menu_start, 0, 0, rootPane);
 				}
 
@@ -200,7 +200,7 @@ public class Janela extends JFrame{
 		zombies = new ArrayList<Zombie>();
 		bullets = new ArrayList<Bullet>();
 
-		status = 1;
+		game_status = 1;
     }
 
     public void render(){
@@ -236,7 +236,7 @@ public class Janela extends JFrame{
 	}
 
 	public Integer getStatus(){
-		return status;
+		return game_status;
 	}
 
     private void setaTecla(int tecla, boolean pressionada) {
