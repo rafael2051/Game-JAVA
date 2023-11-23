@@ -30,7 +30,7 @@ import java.awt.image.BufferedImage;
 public class Janela extends JFrame{
     public JPanel tela;
     public List <Player> players;
-    public boolean[] controleTecla = new boolean[6];
+    public boolean[] controleTecla = new boolean[7];
 	public List <Zombie> zombies; // verificar vector
 	public List <Bullet> bullets; //verifcar vector
 	private BulletStandard bulletStandard;
@@ -39,8 +39,11 @@ public class Janela extends JFrame{
 
 	private Image main_menu_start;
 	private Image main_menu_exit;
+	private Image current_menu_image;
+	private int status_menu_image;
 
 	private Integer game_status;
+	private Integer game_exit;
 
 	private Image scenario;
 	private Image death_image;
@@ -69,10 +72,13 @@ public class Janela extends JFrame{
             public void paintComponent(Graphics g){
 
 				if(game_status == 0){
-					g.drawImage(main_menu_start, 0, 0, rootPane);
+					g.drawImage(current_menu_image, 0, 0, rootPane);
 				}
 
-				else if(players.get(0).getHP() > 0 && fortressHP > 0){
+				else if(players.
+						stream().
+						anyMatch(p -> p.getHP() > 0) 
+						&& fortressHP > 0){
 					g.drawImage(scenario, 0, 0, rootPane);
 					
 					for(Zombie zombie : zombies){
@@ -101,7 +107,7 @@ public class Janela extends JFrame{
 					}
 					for(Player player : players){
 						g.setColor(Color.green);
-						g.drawString("PLAYER_1", player.getPosX(), player.getPosY() - 10);
+						g.drawString("PLAYER_" + player.getId(), player.getPosX(), player.getPosY() - 10);
 						g.drawString("AMMO: " + player.getAmmo(), player.getPosX(), player.getPosY());
 						g.drawString("HP: " + Integer.toString(player.getHP()), player.getPosX(), player.getPosY() + 10);
 						if(player.getWalking()){
@@ -134,13 +140,7 @@ public class Janela extends JFrame{
 									rootPane);
 					}
 				}
-				else{
-					try{
-					Thread.sleep(1000);
-					}
-					catch(Exception e){
-						e.printStackTrace();
-					}
+				else if(game_status == 2){
 					g.drawImage(death_image, 0, 0, rootPane);
 				}
             }
@@ -155,16 +155,11 @@ public class Janela extends JFrame{
 		} catch(IOException e){
 			System.out.println("ERROR!");
 			e.printStackTrace();
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
 		}
 
 		main_menu_start = buffered_main_menu_start.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 		main_menu_exit = buffered_main_menu_exit.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+		current_menu_image = main_menu_start;
 
 		BufferedImage bufferedImage = null;
 		BufferedImage bufferedImageDeath = null;
@@ -199,7 +194,9 @@ public class Janela extends JFrame{
 		zombies = new ArrayList<Zombie>();
 		bullets = new ArrayList<Bullet>();
 
-		game_status = 1;
+		game_status = 0;
+		status_menu_image = 0;
+		game_exit = 0;
     }
 
     public void render(){
@@ -238,6 +235,44 @@ public class Janela extends JFrame{
 		return game_status;
 	}
 
+	public Integer getFortressHP(){
+		return fortressHP;
+	}
+
+	public void changeMenuImage(){
+		if(controleTecla[1] && status_menu_image == 0){
+			current_menu_image = main_menu_exit;
+			status_menu_image = 1;
+		}
+		else if(controleTecla[0] && status_menu_image == 1){
+			current_menu_image = main_menu_start;
+			status_menu_image = 0;
+		}
+	}
+
+	public void checkEnterPressed(){
+		if(controleTecla[6] && status_menu_image == 0){
+			game_status = 1;
+		}
+		else if(controleTecla[6] && status_menu_image == 1){
+			game_exit = 1;
+		}
+	}
+
+	public Integer getGameExit(){
+		return game_exit;
+	}
+
+	public void finishGame(){
+		game_status = 2;
+	}
+
+	public void clean(){
+		players.clear();
+		zombies.clear();
+		bullets.clear();
+	}
+
     private void setaTecla(int tecla, boolean pressionada) {
 		switch (tecla) {
 			case KeyEvent.VK_UP:
@@ -263,6 +298,10 @@ public class Janela extends JFrame{
 			case KeyEvent.VK_R:
 				// Carregar
 				controleTecla[5] = pressionada;
+				break;
+			case KeyEvent.VK_ENTER:
+				// Enter
+				controleTecla[6] = pressionada;
 				break;
 		}
 	}

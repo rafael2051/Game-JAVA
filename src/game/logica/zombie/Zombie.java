@@ -17,6 +17,7 @@ public class Zombie {
     private double previousTimeSinceDeath;
     private double currentTimeSinceDeath;
     private static double timeToRemove;
+    private int idOfPlayerGettingAttacked;
 
     public Zombie(int pos_x, int pos_y, ZombieStandard zombieStandard){
         this.pos_x = 1000;
@@ -59,7 +60,8 @@ public class Zombie {
         return next_imageAttack;
     }
     
-    public void attack(){
+    public void attack(int id){
+        idOfPlayerGettingAttacked = id;
         next_imageAttack++;
         if(next_imageAttack >= ZombieStandard.attack.size()){
             next_imageAttack = 0;
@@ -116,5 +118,13 @@ public class Zombie {
         else{
             return false;
         }
+    }
+
+    public int getPlayerAttacked(){
+        return idOfPlayerGettingAttacked;
+    }
+
+    public void resetPlayerAttacked(){
+        idOfPlayerGettingAttacked = 0;
     }
 }

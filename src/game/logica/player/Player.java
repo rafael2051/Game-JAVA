@@ -12,22 +12,33 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 
 public class Player {
+
+    private int id;
+    private static int count = 0;
+
     private int pos_x;
     private int pos_y;
     private int width;
     private int height;
+
     public Image imagePlayer;
+
     public List <Image> walk;
     public List <Image> shoot;
     public List <Image> reload;
+
     private boolean walking;
     private boolean shooting;
     private boolean reloading;
+
     private int nextImage;
     private int nextImageShooting;
     private int nextImageReloading;
+
     private int hp;
+
     private double previousTime;
+
     private double currentTime;
     private static double attackTime = 1000;
     private static int speed;
@@ -39,6 +50,8 @@ public class Player {
         this.width = width;
         this.height = height;
         this.hp = 100;
+        this.count++;
+        this.id = count;
         BufferedImage bufferedPlayer = null;
         List <BufferedImage> bufferedFeets = new ArrayList <BufferedImage>();
         List <BufferedImage> bufferedShoot = new ArrayList <BufferedImage>();
@@ -198,5 +211,9 @@ public class Player {
 
     public int getHP(){
         return hp;
+    }
+
+    public int getId(){
+        return id;
     }
 }

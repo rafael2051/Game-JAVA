@@ -1,6 +1,7 @@
 package game.logica.janela;
 
 
+import game.logica.player.Player;
 import game.logica.zombie.Zombie;
 
 public class TarefaMoveZombie implements Runnable{
@@ -21,22 +22,31 @@ public class TarefaMoveZombie implements Runnable{
                 janela.decreasesHP();
                 
             }
-            if((zombie.getPosX() >= 
-                (janela.players.get(0).getPosX() + janela.players.get(0).getWidth() - 60) &&
-                zombie.getPosX() <= 
-                (janela.players.get(0).getPosX() + janela.players.get(0).getWidth() - 40)) &&
-                (zombie.getPosY() >=
-                janela.players.get(0).getPosY() - 20  &&
-                zombie.getPosY() <=
-                (janela.players.get(0).getPosY() + janela.players.get(0).getHeight()) - 40)){
-                    zombie.attack();
-                    zombie.setAttacking(true);
-                    janela.players.get(0).gettingAttacked();
+
+            for(Player player : janela.players){
+                if((zombie.getPosX() >= 
+                    (player.getPosX() + player.getWidth() - 60) &&
+                    zombie.getPosX() <= 
+                    (player.getPosX() + player.getWidth() - 40)) &&
+                    (zombie.getPosY() >=
+                    player.getPosY() - 20  &&
+                    zombie.getPosY() <=
+                    (player.getPosY() + player.getHeight()) - 40)){
+                        zombie.attack(player.getId());
+                        zombie.setAttacking(true);
+                        player.gettingAttacked();
+                        System.out.println(player.getId());
                 }
-            else {
-                zombie.move();
-                zombie.setAttacking(false);
+                else if(zombie.getPlayerAttacked() == player.getId()){
+                    zombie.setAttacking(false);
+                    zombie.resetPlayerAttacked();
+                }
+                if(!zombie.getAttacking()){
+                    zombie.move();
+                    zombie.setAttacking(false);
+                }
             }
+
         }
     }   
 }
