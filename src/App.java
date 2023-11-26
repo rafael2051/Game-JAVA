@@ -7,6 +7,7 @@ import game.logica.player.BulletStandard;
 import game.logica.player.Player;
 import game.logica.zombie.Zombie;
 import game.logica.zombie.ZombieStandard;
+import server.GameServer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,9 @@ import java.util.Random;
 public class App {
     public static void main(String[] args) throws Exception {
 
+        GameServer server = new GameServer();
+        server.setPriority(1);
+        server.start();
         double previousTime = System.currentTimeMillis();
         double currentTime = 0;
         double frameTime = 40; // time to update the frame
