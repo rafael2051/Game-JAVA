@@ -1,0 +1,1 @@
+Output of the server, another aplication that will run in the computer choosen as server.
