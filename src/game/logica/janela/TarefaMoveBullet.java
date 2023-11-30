@@ -12,28 +12,35 @@ public class TarefaMoveBullet implements Runnable{
 
     @Override
     public void run() {
-        boolean collision;
-		for(Bullet bullet : janela.bullets){
-            collision = false;
-            for(Zombie zombie : janela.zombies){
-                if(bullet.getPosX() >= zombie.getPosX() &&
-                    bullet.getPosX() <= zombie.getPosX() + zombie.getHeight() &&
-                    bullet.getPosY() >= zombie.getPosY() + 20  &&
-                    bullet.getPosY() <= zombie.getPosY() + zombie.getHeight() - 20 &&
-                    !zombie.isDead()){
-                        janela.bullets.remove(bullet);
-                        zombie.gettingShooted();
-                        if(zombie.getHP() <= 0){
-                            zombie.kill();
+        while(true){
+            boolean collision;
+            for(Bullet bullet : janela.bullets){
+                collision = false;
+                for(Zombie zombie : janela.zombies){
+                    if(bullet.getPosX() >= zombie.getPosX() &&
+                        bullet.getPosX() <= zombie.getPosX() + zombie.getHeight() &&
+                        bullet.getPosY() >= zombie.getPosY() + 20  &&
+                        bullet.getPosY() <= zombie.getPosY() + zombie.getHeight() - 20 &&
+                        !zombie.isDead()){
+                            janela.bullets.remove(bullet);
+                            zombie.gettingShooted();
+                            if(zombie.getHP() <= 0){
+                                zombie.kill();
+                            }
+                            collision = true;
+                            break;
                         }
-                        collision = true;
-                        break;
-                    }
+                }
+                if(!collision){
+                    bullet.move();
+                }
             }
-            if(!collision){
-			    bullet.move();
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-		}
+        }
     }
 
     

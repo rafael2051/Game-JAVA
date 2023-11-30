@@ -17,9 +17,9 @@ import java.util.Random;
 public class App {
     public static void main(String[] args) throws Exception {
 
-        GameServer server = new GameServer();
-        server.setPriority(1);
-        server.start();
+        // GameServer server = new GameServer();
+        // server.setPriority(1);
+        // server.start();
         double previousTime = System.currentTimeMillis();
         double currentTime = 0;
         double frameTime = 40; // time to update the frame
@@ -52,6 +52,7 @@ public class App {
                         break;
                     }
                     janela.render();
+                    Thread.sleep(20);
                 }
             }
 
@@ -63,6 +64,15 @@ public class App {
                 localPlayer = new Player(200, 200, 80, 80);
                 janela.addPlayer(localPlayer);
                 janela.addPlayer(new Player(300, 300, 80, 80));
+                Runnable tarefaMove = new TarefaMove(janela, 0, bulletStandard);
+                Thread threadMove = new Thread(tarefaMove);
+                threadMove.start();
+                Runnable tarefaMoveBullet = new TarefaMoveBullet(janela);
+                Thread threadMoveBullet = new Thread(tarefaMoveBullet);
+                threadMoveBullet.start();
+                Runnable tarefaMoveZombie = new TarefaMoveZombie(janela);
+                Thread threadMoveZombie = new Thread(tarefaMoveZombie);
+                threadMoveZombie.start();
                 while(true){
                     currentTime = System.currentTimeMillis() - previousTime;
                     currentTimeShootRate = System.currentTimeMillis() - previousTimeShootRate;
@@ -80,21 +90,17 @@ public class App {
                     if(currentTimeSpawn >= spawnTimeZombie){
                         previousTimeSpawn = System.currentTimeMillis();
                         currentTimeSpawn = 0;
+                        while(janela.getLockZombie() == 1){
+                            continue;
+                        }
+                        janela.upLockZombie();
                         janela.addZombie(new Zombie(random.nextInt(50, janela.getWidth() - 100), random.nextInt(10, janela.getHeight() - 100), 
                                         zombieStandard));
+                        janela.downLockZombie();
                     }
                     if(currentTime >= frameTime){
                         previousTime = System.currentTimeMillis();
                         currentTime = 0;
-                        Runnable tarefaMove = new TarefaMove(janela, 0, bulletStandard);
-                        Thread threadMove = new Thread(tarefaMove);
-                        threadMove.start();
-                        Runnable tarefaMoveBullet = new TarefaMoveBullet(janela);
-                        Thread threadMoveBullet = new Thread(tarefaMoveBullet);
-                        threadMoveBullet.start();
-                        Runnable tarefaMoveZombie = new TarefaMoveZombie(janela);
-                        Thread threadMoveZombie = new Thread(tarefaMoveZombie);
-                        threadMoveZombie.start();
                         janela.render();
                     }
                     if(janela.getFortressHP() <= 0 || 
@@ -103,11 +109,13 @@ public class App {
                         janela.clean();
                         break;
                     }
+                    Thread.sleep(20);
                 }
             }
 
             else if(janela.getStatus() == 2){
                 janela.render();
+                Thread.sleep(20);
             }
 
         }

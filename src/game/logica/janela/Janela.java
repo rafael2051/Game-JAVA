@@ -47,6 +47,8 @@ public class Janela extends JFrame{
 
 	private Image scenario;
 	private Image death_image;
+
+	private int lockZombie;
     
     public Janela(int width, int height){
 
@@ -197,6 +199,8 @@ public class Janela extends JFrame{
 		game_status = 0;
 		status_menu_image = 0;
 		game_exit = 0;
+
+		lockZombie = 0;
     }
 
     public void render(){
@@ -271,6 +275,18 @@ public class Janela extends JFrame{
 		players.clear();
 		zombies.clear();
 		bullets.clear();
+	}
+
+	public int getLockZombie(){
+		return lockZombie;
+	}
+
+	public void upLockZombie(){
+		lockZombie = 1;
+	}
+
+	public void downLockZombie(){
+		lockZombie = 0;
 	}
 
     private void setaTecla(int tecla, boolean pressionada) {
