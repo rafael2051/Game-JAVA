@@ -1,1 +1,0 @@
-Output of src folder, contaning the code of the game.

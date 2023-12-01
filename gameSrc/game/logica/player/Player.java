@@ -61,15 +61,15 @@ public class Player {
         reload = new ArrayList<Image>();
 
         try{
-            bufferedPlayer = ImageIO.read(new File("game\\images\\Top_Down_Survivor\\rifle\\move\\survivor-move_rifle_1.png"));
+            bufferedPlayer = ImageIO.read(new File("../images/Top_Down_Survivor/rifle/move/survivor-move_rifle_1.png"));
             for(int i = 0;i < 20;i++){
-                bufferedFeets.add(ImageIO.read(new File("game\\images\\Top_Down_Survivor\\feet\\walk\\survivor-walk_" + i + ".png")));
+                bufferedFeets.add(ImageIO.read(new File("../images/Top_Down_Survivor/feet/walk/survivor-walk_" + i + ".png")));
             }
             for(int i = 0;i < 3;i++){
-                bufferedShoot.add(ImageIO.read(new File("game\\images\\Top_Down_Survivor\\rifle\\shoot\\survivor-shoot_rifle_" + i +".png")));
+                bufferedShoot.add(ImageIO.read(new File("../images/Top_Down_Survivor/rifle/shoot/survivor-shoot_rifle_" + i +".png")));
             }
             for(int i = 0;i < 20;i++){
-                bufferedReload.add(ImageIO.read(new File("game\\images\\Top_Down_Survivor\\rifle\\reload\\survivor-reload_rifle_" + i + ".png")));
+                bufferedReload.add(ImageIO.read(new File("../images/Top_Down_Survivor/rifle/reload/survivor-reload_rifle_" + i + ".png")));
             }
         }
         catch(IOException e){

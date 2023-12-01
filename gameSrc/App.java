@@ -1,7 +1,7 @@
 import game.logica.janela.Janela;
-import game.logica.janela.TarefaMove;
-import game.logica.janela.TarefaMoveBullet;
-import game.logica.janela.TarefaMoveZombie;
+import game.threads.TarefaMovePlayer;
+import game.threads.TarefaControlShoot;
+import game.threads.TarefaMoveZombie;
 import game.logica.player.Bullet;
 import game.logica.player.BulletStandard;
 import game.logica.player.Player;
@@ -20,12 +20,6 @@ public class App {
         // GameServer server = new GameServer();
         // server.setPriority(1);
         // server.start();
-        double previousTime = System.currentTimeMillis();
-        double currentTime = 0;
-        double frameTime = 40; // time to update the frame
-        double previousTimeShootRate = System.currentTimeMillis();
-        double currentTimeShootRate = System.currentTimeMillis();
-        double frameTimeShootRate = 200; // time to control the shooting rate
         Random random = new Random();
         double previousTimeSpawn = System.currentTimeMillis();
         double currentTimeSpawn = 0;
@@ -39,8 +33,6 @@ public class App {
 
         Player localPlayer;
 
-        janela.addZombie(new Zombie(janela.getWidth(), 300, zombieStandard));
-
         while(true){
 
             if(janela.getStatus() == 0){
@@ -52,7 +44,7 @@ public class App {
                         break;
                     }
                     janela.render();
-                    Thread.sleep(20);
+                    Thread.sleep(40);
                 }
             }
 
@@ -64,29 +56,17 @@ public class App {
                 localPlayer = new Player(200, 200, 80, 80);
                 janela.addPlayer(localPlayer);
                 janela.addPlayer(new Player(300, 300, 80, 80));
-                Runnable tarefaMove = new TarefaMove(janela, 0, bulletStandard);
+                Runnable tarefaMove = new TarefaMovePlayer(janela, 0, bulletStandard);
                 Thread threadMove = new Thread(tarefaMove);
                 threadMove.start();
-                Runnable tarefaMoveBullet = new TarefaMoveBullet(janela);
-                Thread threadMoveBullet = new Thread(tarefaMoveBullet);
-                threadMoveBullet.start();
+                Runnable tarefaControlShoot = new TarefaControlShoot(janela, localPlayer, bulletStandard);
+                Thread threadControlShoot = new Thread(tarefaControlShoot);
+                threadControlShoot.start();
                 Runnable tarefaMoveZombie = new TarefaMoveZombie(janela);
                 Thread threadMoveZombie = new Thread(tarefaMoveZombie);
                 threadMoveZombie.start();
                 while(true){
-                    currentTime = System.currentTimeMillis() - previousTime;
-                    currentTimeShootRate = System.currentTimeMillis() - previousTimeShootRate;
                     currentTimeSpawn = System.currentTimeMillis() - previousTimeSpawn;
-                    if(currentTimeShootRate >= frameTimeShootRate && 
-                        localPlayer.getShooting() &&
-                        localPlayer.getAmmo() > 0){
-
-                        currentTimeShootRate = 0;
-                        previousTimeShootRate = System.currentTimeMillis();
-                        localPlayer.shoot();
-                        janela.addBullet(localPlayer.getPosX() + 74, localPlayer.getPosY() + 59,
-                                        bulletStandard);
-                    }
                     if(currentTimeSpawn >= spawnTimeZombie){
                         previousTimeSpawn = System.currentTimeMillis();
                         currentTimeSpawn = 0;
@@ -98,24 +78,20 @@ public class App {
                                         zombieStandard));
                         janela.downLockZombie();
                     }
-                    if(currentTime >= frameTime){
-                        previousTime = System.currentTimeMillis();
-                        currentTime = 0;
-                        janela.render();
-                    }
+                    janela.render();
                     if(janela.getFortressHP() <= 0 || 
                         janela.players.stream().allMatch((p) -> p.getHP() <= 0)){
                         janela.finishGame();
                         janela.clean();
                         break;
                     }
-                    Thread.sleep(20);
+                    Thread.sleep(40);
                 }
             }
 
             else if(janela.getStatus() == 2){
                 janela.render();
-                Thread.sleep(20);
+                Thread.sleep(40);
             }
 
         }

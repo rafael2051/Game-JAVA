@@ -31,8 +31,8 @@ public class Janela extends JFrame{
     public JPanel tela;
     public List <Player> players;
     public boolean[] controleTecla = new boolean[7];
-	public List <Zombie> zombies; // verificar vector
-	public List <Bullet> bullets; //verifcar vector
+	public List <Zombie> zombies; 
+	public List <Bullet> bullets; 
 	private BulletStandard bulletStandard;
 	private int fortressHP;
 	private int damageTaken;
@@ -136,10 +136,12 @@ public class Janela extends JFrame{
 						}
 					}
 					for(Bullet bullet : bullets){
-						g.drawImage(bullet.bulletStandard.bullet,
-									bullet.getPosX(),
-									bullet.getPosY(),
-									rootPane);
+						if(bullet.getMustRender()){
+							g.drawImage(bullet.bulletStandard.bullet,
+										bullet.getPosX(),
+										bullet.getPosY(),
+										rootPane);
+						}
 					}
 				}
 				else if(game_status == 2){
@@ -152,8 +154,8 @@ public class Janela extends JFrame{
 		BufferedImage buffered_main_menu_exit = null;
 
 		try{
-			buffered_main_menu_start = ImageIO.read(new File("game\\images\\main_menu\\start.jpg"));
-			buffered_main_menu_exit = ImageIO.read(new File("game\\images\\main_menu\\exit.jpg"));
+			buffered_main_menu_start = ImageIO.read(new File("../images/main_menu/start.jpg"));
+			buffered_main_menu_exit = ImageIO.read(new File("../images/main_menu/exit.jpg"));
 		} catch(IOException e){
 			System.out.println("ERROR!");
 			e.printStackTrace();
@@ -167,8 +169,8 @@ public class Janela extends JFrame{
 		BufferedImage bufferedImageDeath = null;
 
 		try{
-			bufferedImage = ImageIO.read(new File("game\\images\\scenario\\floor_1.jpg"));
-			bufferedImageDeath = ImageIO.read(new File("game\\images\\scenario\\death_image2.jpg"));
+			bufferedImage = ImageIO.read(new File("../images/scenario/floor_1.jpg"));
+			bufferedImageDeath = ImageIO.read(new File("../images/scenario/death_image2.jpg"));
 		}catch (IOException e){
 			System.out.println("ERROR!");
 			e.printStackTrace();

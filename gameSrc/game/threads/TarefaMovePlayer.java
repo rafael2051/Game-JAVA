@@ -1,14 +1,16 @@
-package game.logica.janela;
+package game.threads;
 
 import game.logica.player.BulletStandard;
 
-public class TarefaMove implements Runnable{
+import game.logica.janela.Janela;
+
+public class TarefaMovePlayer implements Runnable{
 
     private Janela janela;
     private int index;
     private BulletStandard bulletStandard;
 
-    public TarefaMove(Janela janela, int index, BulletStandard bulletStandard){
+    public TarefaMovePlayer(Janela janela, int index, BulletStandard bulletStandard){
         this.janela = janela;
         this.index = index;
         this.bulletStandard = bulletStandard;
@@ -32,28 +34,24 @@ public class TarefaMove implements Runnable{
             }
             if(janela.controleTecla[0] && 
                 janela.players.get(index).getPosY() > 20){
-                System.out.println(janela.players.get(index).getPosX() + " " + janela.players.get(index).getPosY());
                 janela.players.get(index).walkUp();
                 janela.players.get(index).setWalking(true);
                 janela.players.get(index).updateNextImage();
             }
             else if(janela.controleTecla[1] &&
                 janela.players.get(index).getPosY() < janela.getHeight() - 130){
-                System.out.println(janela.players.get(index).getPosX() + " " + janela.players.get(index).getPosY());
                 janela.players.get(index).walkDown();
                 janela.players.get(index).setWalking(true);
                 janela.players.get(index).updateNextImage();
             }
             else if(janela.controleTecla[2] &&
                 janela.players.get(index).getPosX() > 0){
-                System.out.println(janela.players.get(index).getPosX() + " " + janela.players.get(index).getPosY());
                 janela.players.get(index).walkLeft();
                 janela.players.get(index).setWalking(true);
                 janela.players.get(index).updateNextImage();
             }
             else if(janela.controleTecla[3] &&
                 janela.players.get(index).getPosX() < janela.getWidth() - 100){
-                System.out.println(janela.players.get(index).getPosX() + " " + janela.players.get(index).getPosY());
                 janela.players.get(index).walkRight();
                 janela.players.get(index).setWalking(true);
                 janela.players.get(index).updateNextImage();

@@ -1,8 +1,10 @@
-package game.logica.janela;
+package game.threads;
 
 
 import game.logica.player.Player;
 import game.logica.zombie.Zombie;
+
+import game.logica.janela.Janela;
 
 public class TarefaMoveZombie implements Runnable{
     private Janela janela;
@@ -39,14 +41,12 @@ public class TarefaMoveZombie implements Runnable{
                             zombie.attack(player.getId());
                             zombie.setAttacking(true);
                             player.gettingAttacked();
-                            System.out.println(player.getId());
                     }
                     else if(zombie.getPlayerAttacked() == player.getId()){
                         zombie.setAttacking(false);
                         zombie.resetPlayerAttacked();
                     }
                     if(!zombie.getAttacking()){
-                        System.out.println(zombie.getAttacking());
                         zombie.move();
                         zombie.setAttacking(false);
                     }

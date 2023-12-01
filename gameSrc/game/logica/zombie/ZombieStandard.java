@@ -25,12 +25,12 @@ public class ZombieStandard {
         BufferedImage bufferedImageGraveyard = null;
         try{
             for(int i = 0;i < 17;i++){
-                bufferedImages.add(ImageIO.read(new File("game\\images\\tds_zombie/export\\move\\skeleton-move_" + i + ".png"))); 
+                bufferedImages.add(ImageIO.read(new File("../images/tds_zombie/export/move/skeleton-move_" + i + ".png"))); 
             }
             for(int i = 0;i < 13;i++){
-                bufferedImagesAttack.add(ImageIO.read(new File("game\\images\\tds_zombie\\export\\attack\\skeleton-attack_" + i + ".png"))); 
+                bufferedImagesAttack.add(ImageIO.read(new File("../images/tds_zombie/export/attack/skeleton-attack_" + i + ".png"))); 
             }
-            bufferedImageGraveyard = ImageIO.read(new File("game\\images\\tds_zombie\\export\\ripZombie.png"));
+            bufferedImageGraveyard = ImageIO.read(new File("../images/tds_zombie/export/ripZombie.png"));
         }
         catch(IOException e){
             System.out.println("ERROR!");

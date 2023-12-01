@@ -14,7 +14,7 @@ public class BulletStandard {
     public BulletStandard(int width, int height){
         BufferedImage bufferedBullet = null;
         try{
-            bufferedBullet = ImageIO.read(new File("game\\images\\Top_Down_Survivor\\bullet.png"));
+            bufferedBullet = ImageIO.read(new File("../images/Top_Down_Survivor/bullet.png"));
         }
         catch(IOException e){
             e.printStackTrace();
