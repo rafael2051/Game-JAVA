@@ -44,6 +44,8 @@ public class Player {
     private static int speed;
     private int ammo;
 
+    private boolean mustReload;
+
     public Player (int pos_x, int pos_y, int width, int height){
         this.pos_x = pos_x;
         this.pos_y = pos_y;
@@ -175,6 +177,14 @@ public class Player {
         if(nextImageShooting >= 3){
             nextImageShooting = 0;
         }
+    }
+
+    public void setMustReload(boolean mustReload){
+        this.mustReload = mustReload;
+    }
+
+    public boolean getMustReload(){
+        return mustReload;
     }
 
     public void reload(){

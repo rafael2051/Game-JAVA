@@ -18,6 +18,8 @@ public class Zombie {
     private double currentTimeSinceDeath;
     private static double timeToRemove;
     private int idOfPlayerGettingAttacked;
+    private boolean mustRender;
+
 
     public Zombie(int pos_x, int pos_y, ZombieStandard zombieStandard){
         this.pos_x = 1000;
@@ -34,6 +36,7 @@ public class Zombie {
         damageTaken = 25;
         dead = false;
         timeToRemove = 10000;
+        mustRender = true;
     }
 
     public int getPosX(){
@@ -126,5 +129,13 @@ public class Zombie {
 
     public void resetPlayerAttacked(){
         idOfPlayerGettingAttacked = 0;
+    }
+
+    public void setMustRender(boolean mustRender){
+        this.mustRender = mustRender;
+    }
+
+    public boolean getMustRender(){
+        return mustRender;
     }
 }

@@ -8,6 +8,7 @@ import game.logica.player.Player;
 import game.logica.zombie.Zombie;
 import game.logica.zombie.ZombieStandard;
 import server.GameServer;
+import client.GameClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +22,6 @@ public class App {
         // server.setPriority(1);
         // server.start();
         Random random = new Random();
-        double previousTimeSpawn = System.currentTimeMillis();
-        double currentTimeSpawn = 0;
-        double spawnTimeZombie = 2000; // time for a new zombie to spawn
 
         Janela janela = new Janela(1000, 1000);
         ZombieStandard zombieStandard = new ZombieStandard(80, 80);
@@ -55,36 +53,26 @@ public class App {
             else if (janela.getStatus() == 1){
                 localPlayer = new Player(200, 200, 80, 80);
                 janela.addPlayer(localPlayer);
-                janela.addPlayer(new Player(300, 300, 80, 80));
                 Runnable tarefaMove = new TarefaMovePlayer(janela, 0, bulletStandard);
                 Thread threadMove = new Thread(tarefaMove);
                 threadMove.start();
                 Runnable tarefaControlShoot = new TarefaControlShoot(janela, localPlayer, bulletStandard);
                 Thread threadControlShoot = new Thread(tarefaControlShoot);
                 threadControlShoot.start();
-                Runnable tarefaMoveZombie = new TarefaMoveZombie(janela);
+                Runnable tarefaMoveZombie = new TarefaMoveZombie(janela, zombieStandard);
                 Thread threadMoveZombie = new Thread(tarefaMoveZombie);
                 threadMoveZombie.start();
+                GameClient gameClient = new GameClient(localPlayer);
+                gameClient.start();
+                janela.setGameClient(gameClient);
                 while(true){
-                    currentTimeSpawn = System.currentTimeMillis() - previousTimeSpawn;
-                    if(currentTimeSpawn >= spawnTimeZombie){
-                        previousTimeSpawn = System.currentTimeMillis();
-                        currentTimeSpawn = 0;
-                        while(janela.getLockZombie() == 1){
-                            continue;
-                        }
-                        janela.upLockZombie();
-                        janela.addZombie(new Zombie(random.nextInt(50, janela.getWidth() - 100), random.nextInt(10, janela.getHeight() - 100), 
-                                        zombieStandard));
-                        janela.downLockZombie();
-                    }
-                    janela.render();
                     if(janela.getFortressHP() <= 0 || 
                         janela.players.stream().allMatch((p) -> p.getHP() <= 0)){
                         janela.finishGame();
                         janela.clean();
                         break;
                     }
+                    janela.render();
                     Thread.sleep(40);
                 }
             }

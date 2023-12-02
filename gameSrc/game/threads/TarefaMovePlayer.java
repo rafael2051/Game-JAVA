@@ -18,20 +18,6 @@ public class TarefaMovePlayer implements Runnable{
     @Override
     public void run() {
         while(true){
-            if(janela.controleTecla[4] &&
-                janela.players.get(index).getNextImageReloading() == - 1){
-                janela.players.get(index).updateNextImageShooting();
-                janela.players.get(index).setShooting(true);
-            }
-            else{
-                janela.players.get(index).setShooting(false);
-            }
-            if(janela.controleTecla[5] &&
-                janela.players.get(index).getNextImageReloading() == -1){
-
-                janela.players.get(index).reload();
-                janela.players.get(index).updateNextImageReloading();
-            }
             if(janela.controleTecla[0] && 
                 janela.players.get(index).getPosY() > 20){
                 janela.players.get(index).walkUp();

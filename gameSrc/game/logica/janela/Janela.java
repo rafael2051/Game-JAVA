@@ -27,6 +27,12 @@ import java.io.File;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import java.awt.event.WindowListener;
+import client.GameClient;
+
 public class Janela extends JFrame{
     public JPanel tela;
     public List <Player> players;
@@ -48,7 +54,7 @@ public class Janela extends JFrame{
 	private Image scenario;
 	private Image death_image;
 
-	private int lockZombie;
+	private GameClient gameClient;	
     
     public Janela(int width, int height){
 
@@ -69,6 +75,14 @@ public class Janela extends JFrame{
 			}
 		});
 
+		this.addWindowListener( new WindowAdapter() {
+			public void windowClosing(WindowEvent evt) {
+				if(gameClient != null){
+					closeGameClient(true);
+				}
+			}
+		 });
+
         tela = new JPanel() {
             @Override
             public void paintComponent(Graphics g){
@@ -84,27 +98,29 @@ public class Janela extends JFrame{
 					g.drawImage(scenario, 0, 0, rootPane);
 					
 					for(Zombie zombie : zombies){
-						if(zombie.isDead()){
-							if(zombie.isAboutTimeToRemove()){
-								zombies.remove(zombie);
+						if(zombie.getMustRender()){
+							if(zombie.isDead()){
+								if(zombie.isAboutTimeToRemove()){
+									continue;
+								}
+								else{
+									g.drawImage(zombie.zombieStandard.graveyard, 
+												zombie.getPosX(),
+												zombie.getPosY(), 
+												rootPane);
+								}
 							}
-							else{
-								g.drawImage(zombie.zombieStandard.graveyard, 
-											zombie.getPosX(),
-											zombie.getPosY(), 
-											rootPane);
+							else if(zombie.getAttacking()){
+								g.drawImage(zombie.zombieStandard.attack.get(zombie.getNextImageAttack()),
+										zombie.getPosX(),
+										zombie.getPosY(),
+										rootPane);
+							} 
+							else{g.drawImage(zombie.zombieStandard.images.get(zombie.getNextImage()),
+										zombie.getPosX(),
+										zombie.getPosY(),
+										rootPane);
 							}
-						}
-						else if(zombie.getAttacking()){
-							g.drawImage(zombie.zombieStandard.attack.get(zombie.getNextImageAttack()),
-									zombie.getPosX(),
-									zombie.getPosY(),
-									rootPane);
-						} 
-						else{g.drawImage(zombie.zombieStandard.images.get(zombie.getNextImage()),
-									zombie.getPosX(),
-									zombie.getPosY(),
-									rootPane);
 						}
 					}
 					for(Player player : players){
@@ -201,8 +217,6 @@ public class Janela extends JFrame{
 		game_status = 0;
 		status_menu_image = 0;
 		game_exit = 0;
-
-		lockZombie = 0;
     }
 
     public void render(){
@@ -279,16 +293,12 @@ public class Janela extends JFrame{
 		bullets.clear();
 	}
 
-	public int getLockZombie(){
-		return lockZombie;
+	public void setGameClient(GameClient gameClient){
+		this.gameClient = gameClient;
 	}
 
-	public void upLockZombie(){
-		lockZombie = 1;
-	}
-
-	public void downLockZombie(){
-		lockZombie = 0;
+	public void closeGameClient(boolean mustClose){
+		gameClient.closeClientSocket(mustClose);
 	}
 
     private void setaTecla(int tecla, boolean pressionada) {

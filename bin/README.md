@@ -1,0 +1,1 @@
+## Directory in which the output from the compilation will be generated.
