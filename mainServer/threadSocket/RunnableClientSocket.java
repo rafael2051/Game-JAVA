@@ -5,16 +5,16 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import threadsControl.ThreadControlRound;
+import control.ControlRound;
 
 public class RunnableClientSocket implements Runnable {
 
     private Socket clientSocket;
-    private ThreadControlRound threadControlRound;
+    private ControlRound controlRound;
 
-    public RunnableClientSocket(Socket clientSocket, ThreadControlRound threadControlRound){
+    public RunnableClientSocket(Socket clientSocket, ControlRound controlRound){
         this.clientSocket = clientSocket;
-        this.threadControlRound = threadControlRound;
+        this.controlRound = controlRound;
     }
 
     @Override
@@ -24,11 +24,16 @@ public class RunnableClientSocket implements Runnable {
             PrintWriter output = null;
             input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             output = new PrintWriter(clientSocket.getOutputStream(), true);
+            controlRound.up_No_Players();
             while(true){
                 String msg = "";
                 msg = input.readLine();
                 if(msg.equals("Ready")){
-
+                    System.out.println(msg);
+                    controlRound.up_Ready_Players();
+                    if(controlRound.gameStart()){
+                        output.println("StartTheGame");
+                    }
                 }
                 else if(msg.equals("FinalConnection")){
                     clientSocket.close();
@@ -36,8 +41,6 @@ public class RunnableClientSocket implements Runnable {
                                         + clientSocket.getInetAddress() 
                                         + ":" + clientSocket.getPort());
                     break;
-                } else{
-                    System.out.println(msg);
                 }
             }
         }

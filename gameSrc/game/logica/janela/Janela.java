@@ -46,7 +46,11 @@ public class Janela extends JFrame{
 	private Image main_menu_start;
 	private Image main_menu_exit;
 	private Image current_menu_image;
+	private Image wait_room_ready;
+	private Image wait_room_not_ready;
+	private Image current_wait_room_image;
 	private int status_menu_image;
+	private int status_wait_room_image;
 
 	private Integer game_status;
 	private Integer game_exit;
@@ -92,7 +96,7 @@ public class Janela extends JFrame{
 				}
 
 				else if(game_status == 1){
-
+					g.drawImage(current_wait_room_image, 0, 0, rootPane);
 				}
 
 				else if(players.
@@ -185,11 +189,11 @@ public class Janela extends JFrame{
 		main_menu_exit = buffered_main_menu_exit.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 		current_menu_image = main_menu_start;
 
-		BufferedImage bufferedImage = null;
+		BufferedImage bufferedImageScenario = null;
 		BufferedImage bufferedImageDeath = null;
 
 		try{
-			bufferedImage = ImageIO.read(new File("../images/scenario/floor_1.jpg"));
+			bufferedImageScenario = ImageIO.read(new File("../images/scenario/floor_1.jpg"));
 			bufferedImageDeath = ImageIO.read(new File("../images/scenario/death_image2.jpg"));
 		}catch (IOException e){
 			System.out.println("ERROR!");
@@ -197,12 +201,23 @@ public class Janela extends JFrame{
 			System.exit(1);
 		}
 
-		scenario = bufferedImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+		scenario = bufferedImageScenario.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 		death_image = bufferedImageDeath.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 
-		if(scenario == null){
+		BufferedImage buffered_wait_room_ready = null;
+		BufferedImage buffered_wait_room_not_ready = null;
+
+		try{
+			buffered_wait_room_ready = ImageIO.read(new File("../images/wait_room/Ready.jpg"));
+			buffered_wait_room_not_ready = ImageIO.read(new File("../images/wait_room/NotReady.jpg"));
+		} catch(IOException e){
 			System.out.println("ERROR!");
+			e.printStackTrace();
 		}
+
+		wait_room_ready = buffered_wait_room_ready.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+		wait_room_not_ready = buffered_wait_room_not_ready.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+		current_wait_room_image = wait_room_not_ready;
 
 
 		this.bulletStandard = new BulletStandard(5, 1);
@@ -220,6 +235,7 @@ public class Janela extends JFrame{
 
 		game_status = 0;
 		status_menu_image = 0;
+		status_wait_room_image = 0;
 		game_exit = 0;
     }
 
@@ -277,14 +293,23 @@ public class Janela extends JFrame{
 	public void checkEnterPressed(){
 		if(game_status == 0){
 			if(controleTecla[6] && status_menu_image == 0){
-				System.out.println("Entrei");
-				game_status = 2;
+				game_status = 1;
 			}
 			else if(controleTecla[6] && status_menu_image == 1){
 				game_exit = 1;
 			}
 		} else if(game_status == 1){
+			if(controleTecla[6] && status_wait_room_image == 0){
+				status_wait_room_image = 1;
+				current_wait_room_image = wait_room_ready;
+				gameClient.tellServerReady();
+			}
+		}
+	}
 
+	public void checkStartGame(){
+		if(gameClient.getStartGame()){
+			game_status = 2;
 		}
 	}
 

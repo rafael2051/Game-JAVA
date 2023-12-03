@@ -7,22 +7,22 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;   
 
 import threadSocket.RunnableClientSocket;
-import threadsControl.ThreadControlRound;
+import control.ControlRound;
 
 public class Server {
 
     public static void main(String[] args) {
         ServerSocket serverSocket = null;
-        List<String> listIp = new ArrayList<String>();
+        List<SocketAddress> listIp = new ArrayList<SocketAddress>();
         List<Thread> listThreadClientSocket = new ArrayList<Thread>();
-        Map<String, Boolean> statusPlayers = new HashMap<String, Boolean>();
-        ThreadControlRound threadControlRound = new ThreadControlRound(statusPlayers);
-        threadControlRound.start();
+        ControlRound controlRound = new ControlRound();
+
         try {
             serverSocket = new ServerSocket(8080);
         } catch (Exception e) {
@@ -31,17 +31,20 @@ public class Server {
         while(true){
             try {
                 Socket clientSocket = serverSocket.accept();
-                System.out.println("Conection initialized with " + clientSocket.getInetAddress()
+                System.out.println("Connection initialized with " + clientSocket.getInetAddress()
                                     + ":" + clientSocket.getPort());
                 BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 PrintWriter output = new PrintWriter(clientSocket.getOutputStream(), true);
                 String msg = input.readLine();
                 if(msg.equals("InitialConnection")){
-                    output.println("Conection initialized" + listIp);
-                    listIp.add(clientSocket.getRemoteSocketAddress().toString());
-                    statusPlayers.put(clientSocket.getInetAddress() + ":"
-                                        + clientSocket.getPort(), false);
-                    RunnableClientSocket runnableClientSocket = new RunnableClientSocket(clientSocket, threadControlRound);
+                    String answer = "";
+                    for(SocketAddress socketAddress : listIp){
+                        answer += socketAddress.toString();
+                        answer += ";";
+                    }
+                    output.println("Connection initialized;" + answer);
+                    listIp.add(clientSocket.getRemoteSocketAddress());
+                    RunnableClientSocket runnableClientSocket = new RunnableClientSocket(clientSocket, controlRound);
                     Thread threadClient = new Thread(runnableClientSocket);
                     threadClient.start();
                     listThreadClientSocket.add(threadClient);
@@ -51,4 +54,6 @@ public class Server {
             }
         }
     }
+
+    public static void removeIp(String string){}
 }

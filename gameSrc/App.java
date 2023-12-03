@@ -29,6 +29,8 @@ public class App {
         BulletStandard bulletStandard = new BulletStandard(10, 2);
         Bullet bullet = new Bullet(0, 0, bulletStandard);
 
+        GameClient gameClient = null;
+
         Player localPlayer;
 
         while(true){
@@ -37,8 +39,9 @@ public class App {
                 while(true){
                     janela.changeMenuImage();
                     janela.checkEnterPressed();
-                    if(janela.getStatus() == 2 ||
+                    if(janela.getStatus() == 1 ||
                         janela.getGameExit() == 1){
+                        Thread.sleep(1000);
                         break;
                     }
                     janela.render();
@@ -50,13 +53,27 @@ public class App {
                 System.exit(0);
             }
 
-            else if(janela.getStatus() == 1){
 
+            else if(janela.getStatus() == 1){
+                gameClient = new GameClient();
+                gameClient.start();
+                janela.setGameClient(gameClient);
+                while(true){
+                    janela.checkEnterPressed();
+                    janela.checkStartGame();
+                    if(janela.getStatus() == 2){
+                        Thread.sleep(1000);
+                        break;
+                    }
+                    janela.render();
+                    Thread.sleep(40);
+                }
             }
 
             else if (janela.getStatus() == 2){
                 localPlayer = new Player(200, 200, 80, 80);
                 janela.addPlayer(localPlayer);
+                gameClient.setLocalPlayer(localPlayer);
                 Runnable tarefaMove = new TarefaMovePlayer(janela, 0, bulletStandard);
                 Thread threadMove = new Thread(tarefaMove);
                 threadMove.start();
@@ -66,9 +83,6 @@ public class App {
                 Runnable tarefaMoveZombie = new TarefaMoveZombie(janela, zombieStandard);
                 Thread threadMoveZombie = new Thread(tarefaMoveZombie);
                 threadMoveZombie.start();
-                GameClient gameClient = new GameClient(localPlayer);
-                gameClient.start();
-                janela.setGameClient(gameClient);
                 while(true){
                     if(janela.getFortressHP() <= 0 || 
                         janela.players.stream().allMatch((p) -> p.getHP() <= 0)){
