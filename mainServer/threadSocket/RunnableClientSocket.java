@@ -30,12 +30,14 @@ public class RunnableClientSocket implements Runnable {
                 if(msg.equals("Ready")){
 
                 }
-                if(msg.equals("FinalConnection")){
+                else if(msg.equals("FinalConnection")){
                     clientSocket.close();
                     System.out.println("Closed connection with " 
                                         + clientSocket.getInetAddress() 
                                         + ":" + clientSocket.getPort());
                     break;
+                } else{
+                    System.out.println(msg);
                 }
             }
         }

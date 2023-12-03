@@ -23,7 +23,7 @@ public class GameClient extends Thread{
     @Override
     public void run(){
         try{
-            Socket clientSocket = new Socket("192.168.0.6", 8080);
+            Socket clientSocket = new Socket("179.34.50.217", 34828);
             this.output = new PrintWriter(clientSocket.getOutputStream(), true);
             this.input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             output.println("InitialConnection");

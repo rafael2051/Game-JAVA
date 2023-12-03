@@ -15,15 +15,19 @@ public class ThreadControlRound extends Thread{
         try{
             while(true){
                 for(Map.Entry<String, Boolean> entrada : statusPlayers.entrySet()) {
-                    System.out.println(entrada); 
                 }
                 try{
                 Thread.sleep(20);
                 } catch(Exception exception1){
 
                 }
+                try{
+                Thread.sleep(20);
+                } catch(Exception exception2){
+
+                }
             }
-        } catch(Exception exception2){
+        } catch(Exception exception3){
             
         }
     }
