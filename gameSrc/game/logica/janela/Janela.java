@@ -91,6 +91,10 @@ public class Janela extends JFrame{
 					g.drawImage(current_menu_image, 0, 0, rootPane);
 				}
 
+				else if(game_status == 1){
+
+				}
+
 				else if(players.
 						stream().
 						anyMatch(p -> p.getHP() > 0) 
@@ -160,7 +164,7 @@ public class Janela extends JFrame{
 						}
 					}
 				}
-				else if(game_status == 2){
+				else if(game_status == 3){
 					g.drawImage(death_image, 0, 0, rootPane);
 				}
             }
@@ -271,11 +275,16 @@ public class Janela extends JFrame{
 	}
 
 	public void checkEnterPressed(){
-		if(controleTecla[6] && status_menu_image == 0){
-			game_status = 1;
-		}
-		else if(controleTecla[6] && status_menu_image == 1){
-			game_exit = 1;
+		if(game_status == 0){
+			if(controleTecla[6] && status_menu_image == 0){
+				System.out.println("Entrei");
+				game_status = 2;
+			}
+			else if(controleTecla[6] && status_menu_image == 1){
+				game_exit = 1;
+			}
+		} else if(game_status == 1){
+
 		}
 	}
 
@@ -284,7 +293,7 @@ public class Janela extends JFrame{
 	}
 
 	public void finishGame(){
-		game_status = 2;
+		game_status = 3;
 	}
 
 	public void clean(){

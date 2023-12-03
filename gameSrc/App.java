@@ -37,7 +37,7 @@ public class App {
                 while(true){
                     janela.changeMenuImage();
                     janela.checkEnterPressed();
-                    if(janela.getStatus() == 1 ||
+                    if(janela.getStatus() == 2 ||
                         janela.getGameExit() == 1){
                         break;
                     }
@@ -50,7 +50,11 @@ public class App {
                 System.exit(0);
             }
 
-            else if (janela.getStatus() == 1){
+            else if(janela.getStatus() == 1){
+
+            }
+
+            else if (janela.getStatus() == 2){
                 localPlayer = new Player(200, 200, 80, 80);
                 janela.addPlayer(localPlayer);
                 Runnable tarefaMove = new TarefaMovePlayer(janela, 0, bulletStandard);
@@ -77,7 +81,7 @@ public class App {
                 }
             }
 
-            else if(janela.getStatus() == 2){
+            else if(janela.getStatus() == 3){
                 janela.render();
                 Thread.sleep(40);
             }
