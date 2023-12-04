@@ -1,3 +1,5 @@
+package server;
+
 import java.util.List;
 import java.util.Map;
 import java.io.BufferedReader;
@@ -12,16 +14,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;   
 
-import threadSocket.RunnableClientSocket;
+import threadSocket.ThreadClientSocket;
 import control.ControlRound;
 
-public class Server {
+public class Server extends Thread{
 
-    public static void main(String[] args) {
-        ServerSocket serverSocket = null;
-        List<SocketAddress> listIp = new ArrayList<SocketAddress>();
-        List<Thread> listThreadClientSocket = new ArrayList<Thread>();
-        ControlRound controlRound = new ControlRound();
+    private static ServerSocket serverSocket = null;
+    private static List<SocketAddress> listIp = new ArrayList<SocketAddress>();
+    private static List<ThreadClientSocket> listThreadClientSocket = new ArrayList<ThreadClientSocket>();
+    private static ControlRound controlRound = new ControlRound();
+    private static String msg;
+
+    public void run(){
 
         try {
             serverSocket = new ServerSocket(8080);
@@ -35,7 +39,7 @@ public class Server {
                                     + ":" + clientSocket.getPort());
                 BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 PrintWriter output = new PrintWriter(clientSocket.getOutputStream(), true);
-                String msg = input.readLine();
+                msg = input.readLine();
                 if(msg.equals("InitialConnection")){
                     String answer = "";
                     for(SocketAddress socketAddress : listIp){
@@ -44,8 +48,7 @@ public class Server {
                     }
                     output.println("Connection initialized;" + answer);
                     listIp.add(clientSocket.getRemoteSocketAddress());
-                    RunnableClientSocket runnableClientSocket = new RunnableClientSocket(clientSocket, controlRound);
-                    Thread threadClient = new Thread(runnableClientSocket);
+                    ThreadClientSocket threadClient = new ThreadClientSocket(clientSocket, controlRound);
                     threadClient.start();
                     listThreadClientSocket.add(threadClient);
                 }
@@ -55,5 +58,17 @@ public class Server {
         }
     }
 
-    public static void removeIp(String string){}
+    public static void tellEveryoneToStart(){
+        for(ThreadClientSocket client : listThreadClientSocket){
+            client.tellToStart();
+        }
+    }
+
+    public static void removeIp(SocketAddress socketAdress){
+        listIp.remove(socketAdress);
+    }
+
+    public static void removeClient(ThreadClientSocket threadClientSocket){
+        listThreadClientSocket.remove(threadClientSocket);
+    }
 }

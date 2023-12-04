@@ -53,7 +53,6 @@ public class GameClient extends Thread{
                     break;
                 }
                 if(tellServerIsReady){
-                    System.out.println("Entrei");
                     tellServerIsReady = false;
                     output.println("Ready");
                 }
@@ -94,13 +93,6 @@ public class GameClient extends Thread{
                     String msg = input.readLine();
                     System.out.println(msg);
                     if(msg.equals("StartTheGame")){
-                        for(String string : listIp){
-                            String[] adress = string.split(":");
-                            String ip = adress[0].substring(1);
-                            String port = adress[1];
-                            System.out.println(ip);
-                            System.out.println(port);
-                        }
                         startGame = true;
                     }
                     try{

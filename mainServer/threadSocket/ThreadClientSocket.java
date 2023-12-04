@@ -4,15 +4,16 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import server.Server;
 
 import control.ControlRound;
 
-public class RunnableClientSocket implements Runnable {
+public class ThreadClientSocket extends Thread{
 
     private Socket clientSocket;
     private ControlRound controlRound;
 
-    public RunnableClientSocket(Socket clientSocket, ControlRound controlRound){
+    public ThreadClientSocket(Socket clientSocket, ControlRound controlRound){
         this.clientSocket = clientSocket;
         this.controlRound = controlRound;
     }
@@ -29,14 +30,19 @@ public class RunnableClientSocket implements Runnable {
                 String msg = "";
                 msg = input.readLine();
                 if(msg.equals("Ready")){
-                    System.out.println(msg);
+                    System.out.println("Player with address" + clientSocket.getRemoteSocketAddress() + " is ready to play");
                     controlRound.up_Ready_Players();
                     if(controlRound.gameStart()){
-                        output.println("StartTheGame");
+                        System.out.println("All the players are ready to play");
+                        Server.tellEveryoneToStart();
                     }
                 }
                 else if(msg.equals("FinalConnection")){
                     clientSocket.close();
+                    controlRound.down_No_Players();
+                    controlRound.down_Ready_Players();
+                    Server.removeIp(clientSocket.getRemoteSocketAddress());
+                    Server.removeClient(this);
                     System.out.println("Closed connection with " 
                                         + clientSocket.getInetAddress() 
                                         + ":" + clientSocket.getPort());
@@ -47,5 +53,15 @@ public class RunnableClientSocket implements Runnable {
         catch(Exception e){
             e.printStackTrace();
         }
+    }
+
+    public void tellToStart(){
+        PrintWriter newOutput = null;
+        try{
+        newOutput = new PrintWriter(clientSocket.getOutputStream(), true);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        newOutput.println("StartTheGame");
     }
 }

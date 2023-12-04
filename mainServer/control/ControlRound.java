@@ -29,4 +29,12 @@ public class ControlRound{
     public void up_Ready_Players(){
         ready_players++;
     }
+
+    public void down_No_Players(){
+        no_players--;
+    }
+
+    public void down_Ready_Players(){
+        ready_players--;
+    }
 }
