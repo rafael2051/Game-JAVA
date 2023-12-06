@@ -1,6 +1,7 @@
 package game.threads;
 
 
+import game.apis.ApiZombieClient;
 import game.logica.player.Player;
 import game.logica.zombie.Zombie;
 import game.logica.zombie.ZombieStandard;
@@ -12,21 +13,27 @@ import java.util.Random;
 public class TarefaMoveZombie implements Runnable{
     private Janela janela;
     private ZombieStandard zombieStandard;
-    private double previousTimeSpawn = System.currentTimeMillis();
-    private double currentTimeSpawn = 0;
-    private double spawnTimeZombie = 2000;
+
+    private ApiZombieClient apiZombieClient;
+    private double currentTime;
+    private double previousTime;
+    private double spawnTime;
 
 
     public TarefaMoveZombie(Janela janela, ZombieStandard zombieStandard){
         this.janela = janela;
         this.zombieStandard = zombieStandard;
+        apiZombieClient = ApiZombieClient.getInstance();
+        previousTime = System.currentTimeMillis();
+        currentTime = 0;
+        spawnTime = 2000;
     }
 
     @Override
     public void run() {
         Random random = new Random();
         while(true){
-            currentTimeSpawn = System.currentTimeMillis() - previousTimeSpawn;
+            currentTime = System.currentTimeMillis() - previousTime;
             for(Zombie zombie : janela.zombies){
                 if(zombie.isDead()){
                     continue;
@@ -59,10 +66,11 @@ public class TarefaMoveZombie implements Runnable{
                     zombie.setAttacking(false);
                 }
             }
-            if(currentTimeSpawn >= spawnTimeZombie){
-                previousTimeSpawn = System.currentTimeMillis();
-                currentTimeSpawn = 0;
-                janela.addZombie(new Zombie(random.nextInt(50, janela.getWidth() - 100), random.nextInt(10, janela.getHeight() - 100), 
+            if(currentTime >= spawnTime && apiZombieClient.checkIfMustAddZombie()){
+                previousTime = System.currentTimeMillis();
+                currentTime = 0;
+                int[] posZombie = apiZombieClient.getPosZombie();
+                janela.addZombie(new Zombie(posZombie[0], posZombie[1],
                                 zombieStandard));
             }
             try {

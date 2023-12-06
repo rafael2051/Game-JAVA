@@ -1,7 +1,6 @@
 package server;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -10,20 +9,25 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;   
+import java.util.Map;
 
 import threadSocket.ThreadClientSocket;
 import control.ControlRound;
 
 public class Server extends Thread{
 
+    private static final Server server = new Server();
     private static ServerSocket serverSocket = null;
     private static List<SocketAddress> listIp = new ArrayList<SocketAddress>();
     private static List<ThreadClientSocket> listThreadClientSocket = new ArrayList<ThreadClientSocket>();
     private static ControlRound controlRound = new ControlRound();
     private static String msg;
+
+    private Server(){}
+
+    public static Server getInstance(){
+        return server;
+    }
 
     public void run(){
 
@@ -58,17 +62,43 @@ public class Server extends Thread{
         }
     }
 
-    public static void tellEveryoneToStart(){
+    public void tellEveryoneToStart(){
         for(ThreadClientSocket client : listThreadClientSocket){
             client.tellToStart();
         }
+        initZombieAdder();
     }
 
-    public static void removeIp(SocketAddress socketAdress){
+    private void initZombieAdder(){
+        Thread zombieAdder = new ZombieAdder();
+        zombieAdder.start();
+    }
+
+    public void removeIp(SocketAddress socketAdress){
         listIp.remove(socketAdress);
     }
 
-    public static void removeClient(ThreadClientSocket threadClientSocket){
+    public void removeClient(ThreadClientSocket threadClientSocket){
         listThreadClientSocket.remove(threadClientSocket);
+    }
+
+    private class ZombieAdder extends Thread{
+        private Random random = new Random();
+        private int pos_x;
+        private int pos_y;
+        public void run(){
+            while(true) {
+                pos_x = 1000;
+                pos_y = random.nextInt(10, 900);
+                for(ThreadClientSocket client : listThreadClientSocket){
+                    client.tellToAddZombie(pos_x, pos_y);
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 }

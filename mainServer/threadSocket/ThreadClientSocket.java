@@ -34,15 +34,15 @@ public class ThreadClientSocket extends Thread{
                     controlRound.up_Ready_Players();
                     if(controlRound.gameStart()){
                         System.out.println("All the players are ready to play");
-                        Server.tellEveryoneToStart();
+                        Server.getInstance().tellEveryoneToStart();
                     }
                 }
                 else if(msg.equals("FinalConnection")){
                     clientSocket.close();
                     controlRound.down_No_Players();
                     controlRound.down_Ready_Players();
-                    Server.removeIp(clientSocket.getRemoteSocketAddress());
-                    Server.removeClient(this);
+                    Server.getInstance().removeIp(clientSocket.getRemoteSocketAddress());
+                    Server.getInstance().removeClient(this);
                     System.out.println("Closed connection with " 
                                         + clientSocket.getInetAddress() 
                                         + ":" + clientSocket.getPort());
@@ -63,5 +63,15 @@ public class ThreadClientSocket extends Thread{
             e.printStackTrace();
         }
         newOutput.println("StartTheGame");
+    }
+
+    public void tellToAddZombie(int pos_x, int pos_y){
+        PrintWriter newOutput = null;
+        try{
+            newOutput = new PrintWriter(clientSocket.getOutputStream(), true);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        newOutput.println("AddNewZombie" + ";" + pos_x + ";" + pos_y);
     }
 }

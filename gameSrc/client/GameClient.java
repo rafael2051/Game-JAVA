@@ -9,6 +9,7 @@ import java.net.SocketAddress;
 import java.util.List;
 import java.util.ArrayList;
 
+import game.apis.ApiZombieClient;
 import game.logica.player.Player;
 
 public class GameClient extends Thread{
@@ -44,8 +45,8 @@ public class GameClient extends Thread{
                 }
                 listIp.add(string);
             }
-            ReceiveMessages rcv = new ReceiveMessages();
-            rcv.start();
+            ReceiveMessagesFromServer rcvServer = new ReceiveMessagesFromServer();
+            rcvServer.start();
             while(true){
                 if(mustClose){
                     output.println("FinalConnection");
@@ -84,7 +85,12 @@ public class GameClient extends Thread{
         return startGame;
     }
 
-    private class ReceiveMessages extends Thread{
+    private class ReceiveMessagesFromServer extends Thread{
+
+        ApiZombieClient apiZombieClient;
+        public ReceiveMessagesFromServer(){
+            apiZombieClient = ApiZombieClient.getInstance();
+        }
 
         @Override
         public void run(){
@@ -95,13 +101,20 @@ public class GameClient extends Thread{
                     if(msg.equals("StartTheGame")){
                         startGame = true;
                     }
+                    if(msg.contains("AddNewZombie")){
+                        String[] positions = msg.split(";");
+                        int pos_x = Integer.parseInt(positions[1]);
+                        int pos_y = Integer.parseInt((positions[2]));
+                        apiZombieClient.addZombiePosOnBuffer(pos_x, pos_y);
+                    }
                     try{
-                        Thread.sleep(20);
+                        Thread.sleep(2000);
                     } catch(Exception e){
                         e.printStackTrace();
                     }
                 }
             } catch(Exception e){
+                System.out.println("Entrei");
                 e.printStackTrace();
             }
         }

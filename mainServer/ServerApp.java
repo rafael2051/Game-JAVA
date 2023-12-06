@@ -1,8 +1,8 @@
 import server.Server;
 
-public class App{
+public class ServerApp{
     public static void main(String[] args) {
-        Thread server = new Server();
+        Thread server = Server.getInstance();
         server.start();
     }
 }
