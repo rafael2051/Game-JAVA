@@ -14,7 +14,7 @@ import java.util.Map;
 import threadSocket.ThreadClientSocket;
 import control.ControlRound;
 
-public class Server extends Thread{
+public class Server extends Thread {
 
     private static final Server server = new Server();
     private static ServerSocket serverSocket = null;
@@ -23,30 +23,31 @@ public class Server extends Thread{
     private static ControlRound controlRound = new ControlRound();
     private static String msg;
 
-    private Server(){}
+    private Server() {
+    }
 
-    public static Server getInstance(){
+    public static Server getInstance() {
         return server;
     }
 
-    public void run(){
+    public void run() {
 
         try {
             serverSocket = new ServerSocket(8080);
         } catch (Exception e) {
             e.getMessage();
         }
-        while(true){
+        while (true) {
             try {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Connection initialized with " + clientSocket.getInetAddress()
-                                    + ":" + clientSocket.getPort());
+                        + ":" + clientSocket.getPort());
                 BufferedReader input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 PrintWriter output = new PrintWriter(clientSocket.getOutputStream(), true);
                 msg = input.readLine();
-                if(msg.equals("InitialConnection")){
+                if (msg.equals("InitialConnection")) {
                     String answer = "";
-                    for(SocketAddress socketAddress : listIp){
+                    for (SocketAddress socketAddress : listIp) {
                         answer += socketAddress.toString();
                         answer += ";";
                     }
@@ -62,35 +63,37 @@ public class Server extends Thread{
         }
     }
 
-    public void tellEveryoneToStart(){
-        for(ThreadClientSocket client : listThreadClientSocket){
-            client.tellToStart();
+    public void tellEveryoneToStart() {
+        for (ThreadClientSocket client : listThreadClientSocket) {
+            client.tellToStart((int) Math.floor(Math.random() * (430 - 15 + 1) + 15),
+                    (int) Math.floor(Math.random() * (945 - 15 + 1) + 15));
         }
         initZombieAdder();
     }
 
-    private void initZombieAdder(){
+    private void initZombieAdder() {
         Thread zombieAdder = new ZombieAdder();
         zombieAdder.start();
     }
 
-    public void removeIp(SocketAddress socketAdress){
+    public void removeIp(SocketAddress socketAdress) {
         listIp.remove(socketAdress);
     }
 
-    public void removeClient(ThreadClientSocket threadClientSocket){
+    public void removeClient(ThreadClientSocket threadClientSocket) {
         listThreadClientSocket.remove(threadClientSocket);
     }
 
-    private class ZombieAdder extends Thread{
+    private class ZombieAdder extends Thread {
         private Random random = new Random();
         private int pos_x;
         private int pos_y;
-        public void run(){
-            while(true) {
+
+        public void run() {
+            while (true) {
                 pos_x = 1000;
                 pos_y = random.nextInt(10, 900);
-                for(ThreadClientSocket client : listThreadClientSocket){
+                for (ThreadClientSocket client : listThreadClientSocket) {
                     client.tellToAddZombie(pos_x, pos_y);
                 }
                 try {
