@@ -41,6 +41,9 @@ public class ThreadClientSocket extends Thread{
                     clientSocket.close();
                     controlRound.down_No_Players();
                     controlRound.down_Ready_Players();
+                    if(controlRound.get_no_Players() == 0){
+                        Server.setGameRunning(false);
+                    }
                     Server.getInstance().removeIp(clientSocket.getRemoteSocketAddress());
                     Server.getInstance().removeClient(this);
                     System.out.println("Closed connection with " 

@@ -20,10 +20,14 @@ public class Server extends Thread{
     private static ServerSocket serverSocket = null;
     private static List<SocketAddress> listIp = new ArrayList<SocketAddress>();
     private static List<ThreadClientSocket> listThreadClientSocket = new ArrayList<ThreadClientSocket>();
-    private static ControlRound controlRound = new ControlRound();
+    private static ControlRound controlRound = ControlRound.getInstance();
     private static String msg;
+    private static Thread zombieAdder;
+    private static boolean gameRunning;
 
-    private Server(){}
+    private Server(){
+        gameRunning = false;
+    }
 
     public static Server getInstance(){
         return server;
@@ -45,16 +49,20 @@ public class Server extends Thread{
                 PrintWriter output = new PrintWriter(clientSocket.getOutputStream(), true);
                 msg = input.readLine();
                 if(msg.equals("InitialConnection")){
-                    String answer = "";
-                    for(SocketAddress socketAddress : listIp){
-                        answer += socketAddress.toString();
-                        answer += ";";
+                    if(gameRunning){
+                        output.println("You cannot play right now!");
+                    } else{
+                        String answer = "";
+                        for(SocketAddress socketAddress : listIp){
+                            answer += socketAddress.toString();
+                            answer += ";";
+                        }
+                        output.println("Connection initialized;" + answer);
+                        listIp.add(clientSocket.getRemoteSocketAddress());
+                        ThreadClientSocket threadClient = new ThreadClientSocket(clientSocket, controlRound);
+                        threadClient.start();
+                        listThreadClientSocket.add(threadClient);
                     }
-                    output.println("Connection initialized;" + answer);
-                    listIp.add(clientSocket.getRemoteSocketAddress());
-                    ThreadClientSocket threadClient = new ThreadClientSocket(clientSocket, controlRound);
-                    threadClient.start();
-                    listThreadClientSocket.add(threadClient);
                 }
             } catch (Exception e) {
                 e.getMessage();
@@ -62,7 +70,12 @@ public class Server extends Thread{
         }
     }
 
+    public static void setGameRunning(boolean gameRunningValue){
+        gameRunning = gameRunningValue;
+    }
+
     public void tellEveryoneToStart(){
+        gameRunning = true;
         for(ThreadClientSocket client : listThreadClientSocket){
             client.tellToStart();
         }
@@ -70,7 +83,7 @@ public class Server extends Thread{
     }
 
     private void initZombieAdder(){
-        Thread zombieAdder = new ZombieAdder();
+        zombieAdder = new ZombieAdder();
         zombieAdder.start();
     }
 
@@ -88,6 +101,9 @@ public class Server extends Thread{
         private int pos_y;
         public void run(){
             while(true) {
+                if(!gameRunning){
+                    break;
+                }
                 pos_x = 1000;
                 pos_y = random.nextInt(10, 900);
                 for(ThreadClientSocket client : listThreadClientSocket){

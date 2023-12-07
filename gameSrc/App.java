@@ -74,7 +74,7 @@ public class App {
                 localPlayer = new Player(200, 200, 80, 80);
                 janela.addPlayer(localPlayer);
                 gameClient.setLocalPlayer(localPlayer);
-                Runnable tarefaMove = new TarefaMovePlayer(janela, 0, bulletStandard);
+                Runnable tarefaMove = new TarefaMovePlayer(janela, localPlayer, bulletStandard);
                 Thread threadMove = new Thread(tarefaMove);
                 threadMove.start();
                 Runnable tarefaControlShoot = new TarefaControlShoot(janela, localPlayer, bulletStandard);

@@ -7,10 +7,16 @@ import java.util.Map;
 public class ControlRound{
     private int no_players;
     private int ready_players;
+    private static final ControlRound controlRound = new ControlRound();
 
-    public ControlRound(){
+    
+    private ControlRound(){
         no_players = 0;
         ready_players = 0;
+    }
+
+    public static ControlRound getInstance(){
+        return controlRound;
     }
 
     public boolean gameStart(){
@@ -20,6 +26,14 @@ public class ControlRound{
         else{
             return false;
         }
+    }
+
+    public int get_no_Players(){
+        return no_players;
+    }
+
+    public int get_no_ready_players(){
+        return ready_players;
     }
 
     public void up_No_Players(){
