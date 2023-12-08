@@ -118,5 +118,8 @@ public class GameClient extends Thread{
                 e.printStackTrace();
             }
         }
-    }   
+    }
+    private class MessagesForPlayers{
+        
+    }
 }
