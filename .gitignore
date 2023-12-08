@@ -1,2 +1,3 @@
-*.class
-bin/game/images
+.idea
+.vscode
+out
