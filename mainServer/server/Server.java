@@ -76,10 +76,27 @@ public class Server extends Thread{
 
     public void tellEveryoneToStart(){
         gameRunning = true;
+        int clientId = 0;
+        int noPlayers = listThreadClientSocket.size();
+        String randomPositions = generateRandomPositions(noPlayers);
         for(ThreadClientSocket client : listThreadClientSocket){
-            client.tellToStart();
+            client.tellToStart(clientId, randomPositions, noPlayers);
+            clientId++;
         }
         initZombieAdder();
+    }
+
+    private String generateRandomPositions(int noPlayers){
+        Random random = new Random();
+        int length_y = 850 / noPlayers;
+        int posX = 200;
+        int posY;
+        String randomPositions = "";
+        for(int i = 0;i < noPlayers;i++){
+            posY = random.nextInt(20 + (i * length_y), (20 + length_y) * (i + 1));
+            randomPositions += "id:" + i + "-" + posX + "-" + posY + ";";
+        }
+        return randomPositions;
     }
 
     private void initZombieAdder(){

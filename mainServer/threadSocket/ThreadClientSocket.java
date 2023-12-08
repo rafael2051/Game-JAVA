@@ -58,14 +58,14 @@ public class ThreadClientSocket extends Thread{
         }
     }
 
-    public void tellToStart(){
+    public void tellToStart(int clientId, String randomPositions, int noPlayers){
         PrintWriter newOutput = null;
         try{
         newOutput = new PrintWriter(clientSocket.getOutputStream(), true);
         } catch(Exception e){
             e.printStackTrace();
         }
-        newOutput.println("StartTheGame");
+        newOutput.println("StartTheGame;" + "yourId:" + clientId + ";" + "noPlayers:" +noPlayers + ";" + randomPositions);
     }
 
     public void tellToAddZombie(int pos_x, int pos_y){

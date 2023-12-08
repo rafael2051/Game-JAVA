@@ -1,5 +1,6 @@
+import game.apis.ApiPlayerClient;
 import game.logica.janela.Janela;
-import game.threads.TarefaMovePlayer;
+import game.threads.TarefaMoveLocalPlayer;
 import game.threads.TarefaControlShoot;
 import game.threads.TarefaMoveZombie;
 import game.logica.player.Bullet;
@@ -71,10 +72,24 @@ public class App {
             }
 
             else if (janela.getStatus() == 2){
-                localPlayer = new Player(200, 200, 80, 80);
-                janela.addPlayer(localPlayer);
+                String positions = ApiPlayerClient.getInstance().getPlayersPos();
+                String[] playersPos = positions.split(";");
+                int noPlayers = ApiPlayerClient.getInstance().getNoPlayers();
+                localPlayer = null;
+                for(int i = 0 ; i < noPlayers;i++){
+                    String[] parameters = playersPos[i].split("/");
+                    int id = Integer.parseInt(parameters[0]);
+                    int posX = Integer.parseInt(parameters[1]);
+                    int posY = Integer.parseInt(parameters[2]);
+                    if(parameters[3].equals("true")){
+                        localPlayer = new Player(id, posX, posY, 80, 80);
+                        janela.addPlayer(localPlayer);
+                    } else if(parameters[3].equals("false")){
+                        janela.addPlayer(new Player(id, posX, posY, 80, 80));
+                    }
+                }
                 gameClient.setLocalPlayer(localPlayer);
-                Runnable tarefaMove = new TarefaMovePlayer(janela, localPlayer, bulletStandard);
+                Runnable tarefaMove = new TarefaMoveLocalPlayer(janela, localPlayer, bulletStandard);
                 Thread threadMove = new Thread(tarefaMove);
                 threadMove.start();
                 Runnable tarefaControlShoot = new TarefaControlShoot(janela, localPlayer, bulletStandard);

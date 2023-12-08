@@ -46,14 +46,13 @@ public class Player {
 
     private boolean mustReload;
 
-    public Player (int pos_x, int pos_y, int width, int height){
+    public Player (int id, int pos_x, int pos_y, int width, int height){
+        this.id = id;
         this.pos_x = pos_x;
         this.pos_y = pos_y;
         this.width = width;
         this.height = height;
         this.hp = 100;
-        this.count++;
-        this.id = count;
         BufferedImage bufferedPlayer = null;
         List <BufferedImage> bufferedFeets = new ArrayList <BufferedImage>();
         List <BufferedImage> bufferedShoot = new ArrayList <BufferedImage>();

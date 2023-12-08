@@ -9,6 +9,7 @@ import java.net.SocketAddress;
 import java.util.List;
 import java.util.ArrayList;
 
+import game.apis.ApiPlayerClient;
 import game.apis.ApiZombieClient;
 import game.logica.player.Player;
 
@@ -88,8 +89,10 @@ public class GameClient extends Thread{
     private class ReceiveMessagesFromServer extends Thread{
 
         ApiZombieClient apiZombieClient;
+        ApiPlayerClient apiPlayerClient;
         public ReceiveMessagesFromServer(){
             apiZombieClient = ApiZombieClient.getInstance();
+            apiPlayerClient = ApiPlayerClient.getInstance();
         }
 
         @Override
@@ -97,8 +100,24 @@ public class GameClient extends Thread{
             try{
                 while(true){
                     String msg = input.readLine();
-                    System.out.println(msg);
-                    if(msg.equals("StartTheGame")){
+                    if(msg.contains("StartTheGame")){
+                        String[] parameters = msg.split(";");
+                        int localId = Integer.parseInt(parameters[1].split(":")[1]);
+                        int noPlayers = Integer.parseInt(parameters[2].split(":")[1]);
+                        System.out.println("localId: " + localId);
+                        System.out.println("noPlayers: " + noPlayers);
+                        for(int i = 0; i < noPlayers;i++){
+                            int playerId = Integer.parseInt(parameters[3+ i].split("-")[0].split(":")[1]);
+                            int posX = Integer.parseInt(parameters[3 + i].split("-")[1]);
+                            int posY = Integer.parseInt(parameters[3 + i].split("-")[2]);
+                            System.out.println("id: " + playerId + " posX: " + posX + " posY: " + posY);
+                            boolean isLocalPlayer = false;
+                            if(playerId == localId){
+                                isLocalPlayer = true;
+                            }
+                            apiPlayerClient.addPlayersPos(playerId, posX, posY, isLocalPlayer);
+                        }
+                        apiPlayerClient.setNoPlayers(noPlayers);
                         startGame = true;
                     }
                     if(msg.contains("AddNewZombie")){
