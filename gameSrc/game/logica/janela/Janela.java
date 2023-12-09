@@ -5,11 +5,13 @@ import java.awt.Graphics;
 import java.awt.Color;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import game.apis.ApiPlayerClient;
 import game.logica.player.Bullet;
 import game.logica.player.BulletStandard;
 
@@ -75,6 +77,7 @@ public class Janela extends JFrame{
 
 			@Override
 			public void keyPressed(KeyEvent e) {
+				createMessageToSend(e.getKeyCode());
 				setaTecla(e.getKeyCode(), true);
 			}
 		});
@@ -133,7 +136,7 @@ public class Janela extends JFrame{
 					}
 					for(Player player : players){
 						g.setColor(Color.green);
-						g.drawString("PLAYER_" + player.getId(), player.getPosX(), player.getPosY() - 10);
+						g.drawString("PLAYER_" + player.getId() + 1, player.getPosX(), player.getPosY() - 10);
 						g.drawString("AMMO: " + player.getAmmo(), player.getPosX(), player.getPosY());
 						g.drawString("HP: " + Integer.toString(player.getHP()), player.getPosX(), player.getPosY() + 10);
 						if(player.getWalking()){
@@ -335,6 +338,41 @@ public class Janela extends JFrame{
 		gameClient.closeClientSocket(mustClose);
 	}
 
+	private void createMessageToSend(int tecla){
+		String msg = "";
+		msg += ApiPlayerClient.getInstance().getId() + ";";
+		switch(tecla){
+			case KeyEvent.VK_UP:
+				// Seta para cima
+				msg += "walk;up;";
+				break;
+			case KeyEvent.VK_DOWN:
+				// Seta para baixo
+				msg += "walk;down;";
+				break;
+			case KeyEvent.VK_LEFT:
+				// Seta para esquerda
+				msg += "walk;left;";
+				break;
+			case KeyEvent.VK_RIGHT:
+				// Seta para direita
+				msg += "walk;right;";
+				break;
+			case KeyEvent.VK_S:
+				// Atirar
+				msg += "shoot;;";
+				break;
+			case KeyEvent.VK_R:
+				// Carregar
+				msg += "reload;;";
+				break;
+		}
+		try {
+			ApiPlayerClient.getInstance().addMessageToSend(msg);
+		} catch(ConcurrentModificationException e){
+			e.printStackTrace();
+		}
+	}
     private void setaTecla(int tecla, boolean pressionada) {
 		switch (tecla) {
 			case KeyEvent.VK_UP:

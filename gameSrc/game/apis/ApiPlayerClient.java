@@ -1,6 +1,9 @@
 package game.apis;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.LinkedList;
 import java.util.List;
 
 /*
@@ -13,13 +16,20 @@ public class ApiPlayerClient {
     private List<PlayerPosInitial> listPlayerPos;
     private int noPlayers;
 
-    private List<String> bufferMessages;
+    private int id;
 
-    private boolean lockBuffer;
+    private List<String> bufferMessagesRcvd;
+    private List<String> bufferMessagesToSend;
+
+    private boolean lockBufferMsgsRcvd;
+    private boolean lockBufferMsgsToSend;
 
     private ApiPlayerClient(){
         listPlayerPos = new ArrayList<PlayerPosInitial>();
-        lockBuffer = false;
+        lockBufferMsgsRcvd = false;
+        lockBufferMsgsToSend = false;
+        bufferMessagesRcvd = new LinkedList<String>();
+        bufferMessagesToSend = new LinkedList<String>();
     }
 
     public static ApiPlayerClient getInstance(){
@@ -33,6 +43,10 @@ public class ApiPlayerClient {
     public void setNoPlayers(int noPlayers){
         this.noPlayers = noPlayers;
     }
+
+    public void setId(int id){ this.id = id;}
+
+    public int getId(){ return id;}
 
     public int getNoPlayers(){
         return noPlayers;
@@ -50,27 +64,47 @@ public class ApiPlayerClient {
         return playersPos;
     }
 
-    public void addMessage(String message){
-        while(lockBuffer){
+    public void addMessageReceived(String message) throws ConcurrentModificationException{
+        while(lockBufferMsgsToSend){
             continue;
         }
-        lockBuffer = true;
-        bufferMessages.add(message);
-        lockBuffer = false;
+        bufferMessagesRcvd.add(message);
     }
 
-    public String getNextMessage(int id){
-        while (lockBuffer){
-            continue;
-        }
-        lockBuffer = true;
-        for(String message : bufferMessages){
+    public String getNextMessageReceived(int id) throws ConcurrentModificationException{
+        lockBufferMsgsRcvd = true;
+        for(String message : bufferMessagesRcvd){
             String[] parametersMessage = message.split(";");
             if(Integer.parseInt(parametersMessage[0]) == id){
+                bufferMessagesRcvd.remove(message);
                 return message;
             }
         }
+        lockBufferMsgsRcvd = false;
         return "default";
+    }
+
+    public void addMessageToSend(String message) throws ConcurrentModificationException {
+        while(lockBufferMsgsToSend){
+            continue;
+        }
+        lockBufferMsgsToSend = true;
+        bufferMessagesToSend.add(message);
+        lockBufferMsgsToSend = false;
+    }
+
+    public boolean checkIfTheresMsgToSend(){
+        return !bufferMessagesToSend.isEmpty();
+    }
+
+    public String getNextMessageToSend() throws ConcurrentModificationException {
+        while (lockBufferMsgsToSend){
+            continue;
+        }
+        lockBufferMsgsToSend = true;
+        String msg = bufferMessagesToSend.remove(0);
+        lockBufferMsgsToSend = false;
+        return msg;
     }
 
     private class PlayerPosInitial{

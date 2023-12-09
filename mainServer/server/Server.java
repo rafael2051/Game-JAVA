@@ -18,7 +18,7 @@ public class Server extends Thread{
 
     private static final Server server = new Server();
     private static ServerSocket serverSocket = null;
-    private static List<SocketAddress> listIp = new ArrayList<SocketAddress>();
+    private static List<InetAddress> listIp = new ArrayList<InetAddress>();
     private static List<ThreadClientSocket> listThreadClientSocket = new ArrayList<ThreadClientSocket>();
     private static ControlRound controlRound = ControlRound.getInstance();
     private static String msg;
@@ -52,13 +52,8 @@ public class Server extends Thread{
                     if(gameRunning){
                         output.println("You cannot play right now!");
                     } else{
-                        String answer = "";
-                        for(SocketAddress socketAddress : listIp){
-                            answer += socketAddress.toString();
-                            answer += ";";
-                        }
-                        output.println("Connection initialized;" + answer);
-                        listIp.add(clientSocket.getRemoteSocketAddress());
+                        output.println("Connection initialized");
+                        listIp.add(clientSocket.getInetAddress());
                         ThreadClientSocket threadClient = new ThreadClientSocket(clientSocket, controlRound);
                         threadClient.start();
                         listThreadClientSocket.add(threadClient);
@@ -80,7 +75,7 @@ public class Server extends Thread{
         int noPlayers = listThreadClientSocket.size();
         String randomPositions = generateRandomPositions(noPlayers);
         for(ThreadClientSocket client : listThreadClientSocket){
-            client.tellToStart(clientId, randomPositions, noPlayers);
+            client.tellToStart(clientId, randomPositions, noPlayers, listIp);
             clientId++;
         }
         initZombieAdder();

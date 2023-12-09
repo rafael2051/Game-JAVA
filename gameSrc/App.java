@@ -1,5 +1,6 @@
 import game.apis.ApiPlayerClient;
 import game.logica.janela.Janela;
+import game.threads.TarefaControlOtherPlayers;
 import game.threads.TarefaMoveLocalPlayer;
 import game.threads.TarefaControlShoot;
 import game.threads.TarefaMoveZombie;
@@ -19,9 +20,6 @@ import java.util.Random;
 public class App {
     public static void main(String[] args) throws Exception {
 
-        // GameServer server = new GameServer();
-        // server.setPriority(1);
-        // server.start();
         Random random = new Random();
 
         Janela janela = new Janela(1000, 1000);
@@ -31,6 +29,7 @@ public class App {
         Bullet bullet = new Bullet(0, 0, bulletStandard);
 
         GameClient gameClient = null;
+        GameServer gameServer = null;
 
         Player localPlayer;
 
@@ -72,6 +71,8 @@ public class App {
             }
 
             else if (janela.getStatus() == 2){
+                gameServer = new GameServer();
+                gameServer.start();
                 String positions = ApiPlayerClient.getInstance().getPlayersPos();
                 String[] playersPos = positions.split(";");
                 int noPlayers = ApiPlayerClient.getInstance().getNoPlayers();
@@ -92,6 +93,9 @@ public class App {
                 Runnable tarefaMove = new TarefaMoveLocalPlayer(janela, localPlayer, bulletStandard);
                 Thread threadMove = new Thread(tarefaMove);
                 threadMove.start();
+                Runnable tarefaMoveOtherPlayers = new TarefaControlOtherPlayers(janela, bulletStandard);
+                Thread threadMoveOtherPlayers = new Thread(tarefaMoveOtherPlayers);
+                threadMoveOtherPlayers.start();
                 Runnable tarefaControlShoot = new TarefaControlShoot(janela, localPlayer, bulletStandard);
                 Thread threadControlShoot = new Thread(tarefaControlShoot);
                 threadControlShoot.start();

@@ -3,7 +3,10 @@ package threadSocket;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.util.List;
+
 import server.Server;
 
 import control.ControlRound;
@@ -58,14 +61,19 @@ public class ThreadClientSocket extends Thread{
         }
     }
 
-    public void tellToStart(int clientId, String randomPositions, int noPlayers){
+    public void tellToStart(int clientId, String randomPositions, int noPlayers, List<InetAddress> listIp){
         PrintWriter newOutput = null;
         try{
         newOutput = new PrintWriter(clientSocket.getOutputStream(), true);
         } catch(Exception e){
             e.printStackTrace();
         }
-        newOutput.println("StartTheGame;" + "yourId:" + clientId + ";" + "noPlayers:" +noPlayers + ";" + randomPositions);
+        String ips = "";
+        for(InetAddress ip : listIp){
+            ips += ip + ";";
+        }
+        newOutput.println("StartTheGame;" + "yourId:" + clientId + ";" + "noPlayers:" + noPlayers + ";" + randomPositions
+                            + ips);
     }
 
     public void tellToAddZombie(int pos_x, int pos_y){
