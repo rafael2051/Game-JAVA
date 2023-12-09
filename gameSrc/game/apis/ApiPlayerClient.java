@@ -24,6 +24,10 @@ public class ApiPlayerClient {
     private boolean lockBufferMsgsRcvd;
     private boolean lockBufferMsgsToSend;
 
+    private String[] messages;
+
+    private boolean[] thereIsMessage;
+
     private ApiPlayerClient(){
         listPlayerPos = new ArrayList<PlayerPosInitial>();
         lockBufferMsgsRcvd = false;
@@ -31,10 +35,15 @@ public class ApiPlayerClient {
         bufferMessagesRcvd = new LinkedList<String>();
         bufferMessagesToSend = new LinkedList<String>();
     }
-
     public static ApiPlayerClient getInstance(){
         return apiPlayerClient;
     }
+
+    public void initMessage(int noPlayers){
+        messages = new String[noPlayers];
+        thereIsMessage = new boolean[noPlayers];
+    }
+
 
     public void addPlayersPos(int id, int posX, int posY, boolean isLocalPlayer){
         listPlayerPos.add(new PlayerPosInitial(id, posX, posY, isLocalPlayer));
@@ -62,6 +71,24 @@ public class ApiPlayerClient {
             playersPos += ";";
         }
         return playersPos;
+    }
+
+    public void setMessageReceived(String message){
+        int id = Integer.parseInt(message.split(";")[0]);
+        messages[id] = message;
+        thereIsMessage[id] = true;
+    }
+
+    public String getMessage(int id){
+        return messages[id];
+    }
+
+    public void setThereIsMessage(boolean thereIsMessage, int id){
+        this.thereIsMessage[id] = thereIsMessage;
+    }
+
+    public boolean getThereIsMessage(int id){
+        return thereIsMessage[id];
     }
 
     public void addMessageReceived(String message) throws ConcurrentModificationException{

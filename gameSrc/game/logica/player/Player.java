@@ -106,6 +106,14 @@ public class Player {
         return pos_y;
     }
 
+    public void setPosX(int pos_x){
+        this.pos_x = pos_x;
+    }
+
+    public void setPosY(int pos_y){
+        this.pos_y = pos_y;
+    }
+
     public int getWidth(){
         return width;
     }

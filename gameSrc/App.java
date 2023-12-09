@@ -55,7 +55,7 @@ public class App {
 
 
             else if(janela.getStatus() == 1){
-                gameClient = new GameClient();
+                gameClient = GameClient.getInstance();
                 gameClient.start();
                 janela.setGameClient(gameClient);
                 while(true){
@@ -71,11 +71,12 @@ public class App {
             }
 
             else if (janela.getStatus() == 2){
-                gameServer = new GameServer();
+                gameServer = GameServer.getInstance();
                 gameServer.start();
                 String positions = ApiPlayerClient.getInstance().getPlayersPos();
                 String[] playersPos = positions.split(";");
                 int noPlayers = ApiPlayerClient.getInstance().getNoPlayers();
+                ApiPlayerClient.getInstance().initMessage(noPlayers);
                 localPlayer = null;
                 for(int i = 0 ; i < noPlayers;i++){
                     String[] parameters = playersPos[i].split("/");
@@ -93,9 +94,13 @@ public class App {
                 Runnable tarefaMove = new TarefaMoveLocalPlayer(janela, localPlayer, bulletStandard);
                 Thread threadMove = new Thread(tarefaMove);
                 threadMove.start();
-                Runnable tarefaMoveOtherPlayers = new TarefaControlOtherPlayers(janela, bulletStandard);
-                Thread threadMoveOtherPlayers = new Thread(tarefaMoveOtherPlayers);
-                threadMoveOtherPlayers.start();
+                for(Player player : janela.players){
+                    if(player.getId() != ApiPlayerClient.getInstance().getId()){
+                        Runnable tarefaMoveOtherPlayers = new TarefaControlOtherPlayers(janela, bulletStandard, player);
+                        Thread threadMoveOtherPlayers = new Thread(tarefaMoveOtherPlayers);
+                        threadMoveOtherPlayers.start();
+                    }
+                }
                 Runnable tarefaControlShoot = new TarefaControlShoot(janela, localPlayer, bulletStandard);
                 Thread threadControlShoot = new Thread(tarefaControlShoot);
                 threadControlShoot.start();

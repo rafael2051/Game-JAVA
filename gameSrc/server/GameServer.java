@@ -11,11 +11,17 @@ import game.apis.ApiPlayerClient;
 import game.logica.janela.Janela;
 
 public class GameServer extends Thread{
+    private static final GameServer gameServer = new GameServer();
     private ApiPlayerClient apiPlayerClient;
 
-    public GameServer(){
+    private String message;
+
+    private GameServer(){
         apiPlayerClient = ApiPlayerClient.getInstance();
-    }       
+    }
+    public static GameServer getInstance(){
+        return gameServer;
+    }
 
     @Override
     public void run(){
@@ -27,13 +33,12 @@ public class GameServer extends Thread{
             throw new RuntimeException(e);
         }
         while(true){
-            byte[] data = new byte[20];
+            byte[] data = new byte[30];
             DatagramPacket datagramPacket = new DatagramPacket(data, data.length);
             try {
                 datagramSocket.receive(datagramPacket);
                 String msg = new String(datagramPacket.getData(), "UTF-8");
-                System.out.println(msg);
-                apiPlayerClient.addMessageReceived(msg);
+                apiPlayerClient.setMessageReceived(msg);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

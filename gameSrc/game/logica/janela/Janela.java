@@ -368,7 +368,7 @@ public class Janela extends JFrame{
 				break;
 		}
 		try {
-			ApiPlayerClient.getInstance().addMessageToSend(msg);
+			GameClient.getInstance().sendMessage(msg);
 		} catch(ConcurrentModificationException e){
 			e.printStackTrace();
 		}

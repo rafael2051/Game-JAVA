@@ -15,6 +15,7 @@ import game.logica.player.Player;
 
 public class GameClient extends Thread{
 
+    private static final GameClient gameClient = new GameClient();
     private Socket clientSocket;
     private PrintWriter output;
     private BufferedReader input;
@@ -23,12 +24,19 @@ public class GameClient extends Thread{
     private boolean tellServerIsReady;
     private boolean mustClose;
     private List<String> listIp;
+    private String message;
+    private boolean thereIsMessage;
 
-    public GameClient(){
+    private GameClient(){
         mustClose = false;
         listIp = new ArrayList<String>();
         tellServerIsReady = false;
         startGame = false;
+        thereIsMessage = false;
+    }
+
+    public static GameClient getInstance(){
+        return gameClient;
     }
 
     @Override
@@ -141,6 +149,11 @@ public class GameClient extends Thread{
             }
         }
     }
+
+    public void sendMessage(String message){
+        this.message = message;
+        thereIsMessage = true;
+    }
     private class MessagesForPlayers extends Thread{
         ApiPlayerClient apiPlayerClient;
 
@@ -162,13 +175,13 @@ public class GameClient extends Thread{
                     throw new RuntimeException(e);
                 }
                 try{
-                    if(apiPlayerClient.checkIfTheresMsgToSend()){
-                        msg = apiPlayerClient.getNextMessageToSend();
+                    if(thereIsMessage){
+                        thereIsMessage = false;
                         int id = 0;
                         for(String ip : listIp){
                             try {
                                 DatagramSocket udpSocket = new DatagramSocket();
-                                byte[] data = msg.getBytes();
+                                byte[] data = message.getBytes();
                                 SocketAddress socketAddress = new InetSocketAddress(ip, 9765 + id);
                                 DatagramPacket packet = new DatagramPacket(
                                 data, data.length, socketAddress);
