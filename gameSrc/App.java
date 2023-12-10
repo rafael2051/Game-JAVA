@@ -77,6 +77,7 @@ public class App {
                 String[] playersPos = positions.split(";");
                 int noPlayers = ApiPlayerClient.getInstance().getNoPlayers();
                 ApiPlayerClient.getInstance().initMessage(noPlayers);
+                janela.initBulletsFromOtherPlayers(noPlayers);
                 localPlayer = null;
                 for(int i = 0 ; i < noPlayers;i++){
                     String[] parameters = playersPos[i].split("/");

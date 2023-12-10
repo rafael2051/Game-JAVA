@@ -40,7 +40,8 @@ public class Janela extends JFrame{
     public List <Player> players;
     public boolean[] controleTecla = new boolean[7];
 	public List <Zombie> zombies; 
-	public List <Bullet> bullets; 
+	public List <Bullet> bullets;
+	public List<Bullet>[] bulletsFromOtherPlayers;
 	private BulletStandard bulletStandard;
 	private int fortressHP;
 	private int damageTaken;
@@ -170,6 +171,17 @@ public class Janela extends JFrame{
 										rootPane);
 						}
 					}
+					for(List<Bullet> listBullets : bulletsFromOtherPlayers) {
+						for(Bullet bullet : listBullets) {
+							if (bullet.getMustRender()) {
+								g.drawImage(bullet.bulletStandard.bullet,
+										bullet.getPosX(),
+										bullet.getPosY(),
+										rootPane);
+							}
+
+						}
+					}
 				}
 				else if(game_status == 3){
 					g.drawImage(death_image, 0, 0, rootPane);
@@ -252,6 +264,13 @@ public class Janela extends JFrame{
 
 	public void addZombie(Zombie zombie){
 		zombies.add(zombie);
+	}
+
+	public void initBulletsFromOtherPlayers(int noPlayers){
+		bulletsFromOtherPlayers = new ArrayList[noPlayers];
+		for(int i = 0;i < noPlayers;i++){
+			bulletsFromOtherPlayers[i] = new ArrayList<>();
+		}
 	}
 
 	public void addBullet(int pos_x, int pos_y, BulletStandard bulletStandard){

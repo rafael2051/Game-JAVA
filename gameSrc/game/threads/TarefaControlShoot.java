@@ -1,5 +1,7 @@
 package game.threads;
 
+import client.GameClient;
+import game.apis.ApiPlayerClient;
 import game.logica.player.Player;
 import game.logica.player.Bullet;
 import game.logica.zombie.Zombie;
@@ -70,15 +72,28 @@ public class TarefaControlShoot implements Runnable{
                     }
                 }
 
+                String msg = "";
+                msg += ApiPlayerClient.getInstance().getId() + ";";
                 if(localPlayer.getShooting() &&
-                localPlayer.getAmmo() > 0
-                && localPlayer.getMustReload() == false){
-
+                        localPlayer.getAmmo() > 0
+                        && localPlayer.getMustReload() == false){
+                    msg += "shoot;;;;";
+                    try {
+                        GameClient.getInstance().sendMessage(msg);
+                    } catch(Exception e){
+                        e.printStackTrace();
+                    }
                     localPlayer.shoot();
                     janela.addBullet(localPlayer.getPosX() + 74, localPlayer.getPosY() + 59,
-                                    bulletStandard);
+                            bulletStandard);
                 }
                 else if (localPlayer.getMustReload() == true){
+                    msg += "reload;;;;";
+                    try {
+                        GameClient.getInstance().sendMessage(msg);
+                    } catch(Exception e){
+                        e.printStackTrace();
+                    }
                     localPlayer.setMustReload(false);
                     localPlayer.reload();
                     localPlayer.updateNextImageReloading();
