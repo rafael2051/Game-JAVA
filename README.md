@@ -3,7 +3,7 @@
 Hi there! This is a game made by me in Java.
 This is a 2D top-down game, where the player must survive against zombies.
 
-![Game](src/game/images/demo/showing_game.jpg)
+![](docs/demo.gif)
 
 ## Folder Structure
 
