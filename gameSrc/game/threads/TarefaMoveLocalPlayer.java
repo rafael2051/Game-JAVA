@@ -1,6 +1,7 @@
 package game.threads;
 
 import client.GameClient;
+import game.Keys;
 import game.apis.ApiPlayerClient;
 import game.logica.player.BulletStandard;
 
@@ -24,7 +25,7 @@ public class TarefaMoveLocalPlayer implements Runnable{
         while(true){
             String msg = "";
             msg += ApiPlayerClient.getInstance().getId() + ";";
-            if(janela.controleTecla[0] && 
+            if(janela.controleTecla[Keys.UP] && 
                 localPlayer.getPosY() > 20){
                 localPlayer.walkUp();
                 msg += "walk;up;" + localPlayer.getPosX() +
@@ -32,7 +33,7 @@ public class TarefaMoveLocalPlayer implements Runnable{
                 localPlayer.setWalking(true);
                 localPlayer.updateNextImage();
             }
-            else if(janela.controleTecla[1] &&
+            else if(janela.controleTecla[Keys.DOWN] &&
                 localPlayer.getPosY() < janela.getHeight() - 130){
                 localPlayer.walkDown();
                 msg += "walk;down;" + localPlayer.getPosX() +
@@ -40,7 +41,7 @@ public class TarefaMoveLocalPlayer implements Runnable{
                 localPlayer.setWalking(true);
                 localPlayer.updateNextImage();
             }
-            else if(janela.controleTecla[2] &&
+            else if(janela.controleTecla[Keys.LEFT] &&
                 localPlayer.getPosX() > 0){
                 localPlayer.walkLeft();
                 msg += "walk;left;" + localPlayer.getPosX() +
@@ -48,7 +49,7 @@ public class TarefaMoveLocalPlayer implements Runnable{
                 localPlayer.setWalking(true);
                 localPlayer.updateNextImage();
             }
-            else if(janela.controleTecla[3] &&
+            else if(janela.controleTecla[Keys.RIGHT] &&
                 localPlayer.getPosX() < janela.getWidth() - 100){
                 localPlayer.walkRight();
                 msg += "walk;right;" + localPlayer.getPosX() +
@@ -66,7 +67,7 @@ public class TarefaMoveLocalPlayer implements Runnable{
                 e.printStackTrace();
             }
             try {
-                Thread.sleep(20);
+                Thread.sleep(40);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

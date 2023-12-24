@@ -17,6 +17,8 @@ import game.logica.player.BulletStandard;
 
 import game.logica.player.Player;
 
+import game.Keys;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -36,7 +38,7 @@ import java.awt.event.WindowListener;
 import client.GameClient;
 
 public class Janela extends JFrame{
-    public JPanel tela;
+	public JPanel tela;
     public List <Player> players;
     public boolean[] controleTecla = new boolean[7];
 	public List <Zombie> zombies; 
@@ -78,7 +80,6 @@ public class Janela extends JFrame{
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				createMessageToSend(e.getKeyCode());
 				setaTecla(e.getKeyCode(), true);
 			}
 		});
@@ -302,11 +303,11 @@ public class Janela extends JFrame{
 	}
 
 	public void changeMenuImage(){
-		if(controleTecla[1] && status_menu_image == 0){
+		if(controleTecla[Keys.DOWN] && status_menu_image == 0){
 			current_menu_image = main_menu_exit;
 			status_menu_image = 1;
 		}
-		else if(controleTecla[0] && status_menu_image == 1){
+		else if(controleTecla[Keys.UP] && status_menu_image == 1){
 			current_menu_image = main_menu_start;
 			status_menu_image = 0;
 		}
@@ -314,14 +315,14 @@ public class Janela extends JFrame{
 
 	public void checkEnterPressed(){
 		if(game_status == 0){
-			if(controleTecla[6] && status_menu_image == 0){
+			if(controleTecla[Keys.ENTER] && status_menu_image == 0){
 				game_status = 1;
 			}
-			else if(controleTecla[6] && status_menu_image == 1){
+			else if(controleTecla[Keys.ENTER] && status_menu_image == 1){
 				game_exit = 1;
 			}
 		} else if(game_status == 1){
-			if(controleTecla[6] && status_wait_room_image == 0){
+			if(controleTecla[Keys.ENTER] && status_wait_room_image == 0){
 				status_wait_room_image = 1;
 				current_wait_room_image = wait_room_ready;
 				gameClient.tellServerReady();
@@ -356,71 +357,35 @@ public class Janela extends JFrame{
 	public void closeGameClient(boolean mustClose){
 		gameClient.closeClientSocket(mustClose);
 	}
-
-	private void createMessageToSend(int tecla){
-		String msg = "";
-		msg += ApiPlayerClient.getInstance().getId() + ";";
-		switch(tecla){
-			case KeyEvent.VK_UP:
-				// Seta para cima
-				msg += "walk;up;";
-				break;
-			case KeyEvent.VK_DOWN:
-				// Seta para baixo
-				msg += "walk;down;";
-				break;
-			case KeyEvent.VK_LEFT:
-				// Seta para esquerda
-				msg += "walk;left;";
-				break;
-			case KeyEvent.VK_RIGHT:
-				// Seta para direita
-				msg += "walk;right;";
-				break;
-			case KeyEvent.VK_S:
-				// Atirar
-				msg += "shoot;;";
-				break;
-			case KeyEvent.VK_R:
-				// Carregar
-				msg += "reload;;";
-				break;
-		}
-		try {
-			GameClient.getInstance().sendMessage(msg);
-		} catch(ConcurrentModificationException e){
-			e.printStackTrace();
-		}
-	}
     private void setaTecla(int tecla, boolean pressionada) {
 		switch (tecla) {
 			case KeyEvent.VK_UP:
 				// Seta para cima
-				controleTecla[0] = pressionada;
+				controleTecla[Keys.UP] = pressionada;
 				break;
 			case KeyEvent.VK_DOWN:
 				// Seta para baixo
-				controleTecla[1] = pressionada;
+				controleTecla[Keys.DOWN] = pressionada;
 				break;
 			case KeyEvent.VK_LEFT:
 				// Seta para esquerda
-				controleTecla[2] = pressionada;
+				controleTecla[Keys.LEFT] = pressionada;
 				break;
 			case KeyEvent.VK_RIGHT:
 				// Seta para direita
-				controleTecla[3] = pressionada;
+				controleTecla[Keys.RIGHT] = pressionada;
 				break;
 			case KeyEvent.VK_S:
 				// Atirar
-				controleTecla[4] = pressionada;
+				controleTecla[Keys.SHOOT] = pressionada;
 				break;
 			case KeyEvent.VK_R:
 				// Carregar
-				controleTecla[5] = pressionada;
+				controleTecla[Keys.RELOAD] = pressionada;
 				break;
 			case KeyEvent.VK_ENTER:
 				// Enter
-				controleTecla[6] = pressionada;
+				controleTecla[Keys.ENTER] = pressionada;
 				break;
 		}
 	}
